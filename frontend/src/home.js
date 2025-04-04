@@ -152,29 +152,30 @@ export const ImageUpload = () => {
   let confidence = 0;
 
   const sendFile = async () => {
-    if (image) {
-      try {
-        let formData = new FormData();
-        formData.append("file", selectedFile);
-        let res = await axios({
-          method: "post",
-          url: "https://micti-potato-disease-classification.hf.space/docs",
-          data: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Accept': 'application/json'
-          }
-        });
-        if (res.status === 200) {
-          setData(res.data);
+  if (image) {
+    try {
+      let formData = new FormData();
+      formData.append("file", selectedFile);
+      let res = await axios({
+        method: "post",
+        url: "https://micti-potato-disease-classification.hf.space/predict/",
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json'
         }
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setIsloading(false);
+      });
+      if (res.status === 200) {
+        setData(res.data);
       }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsloading(false);
     }
   }
+};
+
 
   const clearData = () => {
     setData(null);
