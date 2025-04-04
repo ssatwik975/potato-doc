@@ -158,7 +158,7 @@ export const ImageUpload = () => {
         formData.append("file", selectedFile);
         let res = await axios({
           method: "post",
-          url: https://micti-potato-disease-classification.hf.space/docs,
+          url: "https://micti-potato-disease-classification.hf.space/docs",
           data: formData,
           headers: {
             'Content-Type': 'multipart/form-data',
