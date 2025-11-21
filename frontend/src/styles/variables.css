@@ -44,36 +44,80 @@
   /* Shadows */
   --shadow-glow: 0 0 40px rgba(0, 255, 157, 0.3);
   --shadow-float: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Scanner Specific */
+  --color-bg-scanner: rgba(10, 10, 10, 0.8);
+
+  /* Hero Text */
+  --hero-text-gradient: linear-gradient(180deg, var(--color-text-main) 0%, rgba(255,255,255,0.7) 100%);
+  --hero-text-fill: transparent;
+  --hero-text-clip: text;
+  --hero-instantly-gradient: linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.5) 100%);
+  --hero-instantly-fill: transparent;
+  
+  /* Button Text */
+  --button-text-color: #000000;
+
+  /* Footer */
+  --footer-bg: var(--color-bg-dark);
+  --footer-grid: rgba(255, 255, 255, 0.03);
+  --footer-border: rgba(255, 255, 255, 0.05);
+
+  /* Navbar Active State */
+  --nav-active-bg: var(--glass-highlight);
+  --nav-active-text: var(--color-text-main);
 }
 
 /* === LIGHT MODE === */
 :root[data-theme="light"] {
   /* Background */
   --color-bg-main: #ffffff;
-  --color-bg-dark: #f5f7fa;
-  --color-bg-card: rgba(255, 255, 255, 0.8);
+  --color-bg-dark: #f8f9fa; /* Lighter grey for better contrast */
+  --color-bg-card: rgba(255, 255, 255, 0.9);
 
   /* Text */
-  --color-text-main: #0a0f0d;
-  --color-text-muted: #5a6c5d;
+  --color-text-main: #1a1f1c;
+  --color-text-muted: #5e6e62;
 
   /* Primary (Darker Green for light mode) */
-  --color-primary: #00cc7a;
-  --color-primary-dim: rgba(0, 204, 122, 0.2);
-  --color-primary-glow: rgba(0, 204, 122, 0.3);
+  --color-primary: #00a865;
+  --color-primary-dim: rgba(0, 168, 101, 0.1);
+  --color-primary-glow: rgba(0, 168, 101, 0.2);
 
   /* Secondary */
-  --color-secondary: #ff3d00;
-  --color-secondary-dim: rgba(255, 61, 0, 0.2);
+  --color-secondary: #d93400;
+  --color-secondary-dim: rgba(217, 52, 0, 0.1);
 
   /* Glass Effects (inverted for light mode) */
-  --glass-bg: rgba(0, 0, 0, 0.03);
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --glass-highlight: rgba(0, 0, 0, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.75); /* White tint for cleaner look */
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-highlight: rgba(0, 0, 0, 0.03);
 
   /* Shadows */
-  --shadow-glow: 0 0 40px rgba(0, 204, 122, 0.2);
-  --shadow-float: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 30px rgba(0, 168, 101, 0.15);
+  --shadow-float: 0 10px 40px -10px rgba(0, 0, 0, 0.08); /* Softer shadow */
+
+  /* Scanner Specific */
+  --color-bg-scanner: rgba(255, 255, 255, 0.95);
+
+  /* Hero Text */
+  --hero-text-gradient: none;
+  --hero-text-fill: var(--color-text-main);
+  --hero-text-clip: border-box;
+  --hero-instantly-gradient: none;
+  --hero-instantly-fill: var(--color-primary);
+
+  /* Button Text */
+  --button-text-color: #ffffff;
+
+  /* Footer */
+  --footer-bg: #ffffff;
+  --footer-grid: rgba(0, 0, 0, 0.03);
+  --footer-border: rgba(0, 0, 0, 0.06);
+
+  /* Navbar Active State */
+  --nav-active-bg: var(--color-primary-dim);
+  --nav-active-text: var(--color-primary);
 }
 
 /* === SCROLLBAR === */

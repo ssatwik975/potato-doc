@@ -15,30 +15,37 @@ export const Footer = () => {
 
     return (
         <footer style={{
-            background: 'var(--color-bg-dark)',
-            borderTop: '1px solid var(--glass-border)',
+            background: 'var(--footer-bg)',
+            borderTop: '1px solid var(--footer-border)',
             position: 'relative',
             overflow: 'hidden',
+            paddingTop: '2rem',
+            paddingBottom: isMobile ? '8rem' : '2rem', // Add padding for mobile navbar
         }}>
             {/* Grid pattern overlay */}
             <div style={{
                 position: 'absolute',
                 inset: 0,
-                backgroundImage: `linear-gradient(var(--glass-border) 1px, transparent 1px),
-                          linear-gradient(90deg, var(--glass-border) 1px, transparent 1px)`,
-                backgroundSize: '60px 60px',
-                opacity: 0.3,
+                backgroundImage: `linear-gradient(var(--footer-grid) 1px, transparent 1px),
+                          linear-gradient(90deg, var(--footer-grid) 1px, transparent 1px)`,
+                backgroundSize: '40px 40px',
+                opacity: 1,
                 pointerEvents: 'none',
+                maskImage: 'linear-gradient(to bottom, transparent, black)',
             }} />
 
             {/* Neon accent line */}
             <div style={{
-                height: '2px',
+                height: '1px',
                 background: `linear-gradient(90deg, 
           transparent 0%, 
           var(--color-primary) 50%, 
           transparent 100%)`,
-                opacity: 0.6,
+                opacity: 0.3,
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
             }} />
 
             <div className="container" style={{ position: 'relative', zIndex: 1 }}>
@@ -151,7 +158,7 @@ export const Footer = () => {
                             {['Research Papers', 'API Documentation', 'About Us', 'Contact'].map((link) => (
                                 <li key={link}>
                                     <a
-                                        href="#"
+                                        href="/"
                                         style={{
                                             color: 'var(--color-text-muted)',
                                             fontSize: '0.9rem',
@@ -256,7 +263,7 @@ export const Footer = () => {
                         fontSize: '0.85rem',
                         textAlign: isMobile ? 'center' : 'left',
                     }}>
-                        © 2024 PotatoDoc. All rights reserved.
+                        © 2025 PotatoDoc. All rights reserved.
                     </p>
                     <div style={{
                         display: 'flex',
@@ -267,7 +274,7 @@ export const Footer = () => {
                         {['Privacy Policy', 'Terms of Service', 'Cookies'].map((link) => (
                             <a
                                 key={link}
-                                href="#"
+                                href="/"
                                 style={{
                                     color: 'var(--color-text-muted)',
                                     fontSize: '0.85rem',

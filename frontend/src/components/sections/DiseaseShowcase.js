@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from '../../hooks/useInView';
 import { useBreakpoint } from '../../hooks/useMediaQuery';
+import { Activity, AlertCircle, CheckCircle } from 'lucide-react';
 
 const DiseaseCard = ({ title, symptoms, treatment, color, delay }) => {
     const ref = useRef(null);
@@ -11,78 +12,123 @@ const DiseaseCard = ({ title, symptoms, treatment, color, delay }) => {
     return (
         <motion.div
             ref={ref}
-            initial={{ opacity: 0, x: isMobile ? 0 : 50, y: isMobile ? 30 : 0 }}
-            animate={isInView ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x: isMobile ? 0 : 50, y: isMobile ? 30 : 0 }}
-            transition={{ duration: 0.8, delay: isMobile ? delay / 2 : delay }}
-            whileHover={isMobile ? {} : { y: -10 }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+            transition={{ duration: 0.6, delay: isMobile ? delay / 2 : delay }}
+            whileHover={{ y: -5, boxShadow: `0 20px 40px -10px ${color}20` }}
             style={{
-                background: 'var(--color-bg-card)',
-                border: '1px solid var(--glass-border)',
-                borderRadius: isMobile ? '16px' : '24px',
-                padding: isMobile ? '2rem' : '3rem',
-                minWidth: isMobile ? '100%' : '350px',
+                background: 'rgba(255,255,255,0.02)',
+                border: '1px solid rgba(255,255,255,0.05)',
+                borderRadius: '24px',
+                padding: '0',
+                minWidth: isMobile ? '100%' : '380px',
                 maxWidth: isMobile ? '100%' : '400px',
                 backdropFilter: 'blur(20px)',
                 position: 'relative',
                 overflow: 'hidden',
                 flexShrink: 0,
+                display: 'flex',
+                flexDirection: 'column',
             }}
         >
             <div style={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
-                width: isMobile ? '100px' : '150px',
-                height: isMobile ? '100px' : '150px',
-                background: `radial-gradient(circle at top right, ${color} 0%, transparent 70%)`,
-                opacity: 0.2,
-                filter: 'blur(20px)',
-            }} />
-
-            <h3 style={{
-                fontSize: isMobile ? '1.5rem' : '2rem',
-                marginBottom: isMobile ? '1.5rem' : '2rem',
-                color: 'var(--color-text-main)'
+                padding: '2rem',
+                background: `linear-gradient(180deg, ${color}10 0%, transparent 100%)`,
+                borderBottom: '1px solid rgba(255,255,255,0.05)',
             }}>
-                {title}
-            </h3>
-
-            <div style={{ marginBottom: isMobile ? '1.5rem' : '2rem' }}>
-                <h4 style={{
-                    color: 'var(--color-text-muted)',
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
                     marginBottom: '1rem',
-                    fontSize: '0.85rem',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.1em'
                 }}>
-                    Symptoms
-                </h4>
-                <ul style={{ listStyle: 'none', color: 'var(--color-text-main)', fontSize: isMobile ? '0.9rem' : '1rem' }}>
-                    {symptoms.map((s, i) => (
-                        <li key={i} style={{ marginBottom: '0.5rem', display: 'flex', gap: '0.5rem' }}>
-                            <span style={{ color }}>•</span> {s}
-                        </li>
-                    ))}
-                </ul>
+                    <div style={{
+                        padding: '0.5rem',
+                        borderRadius: '12px',
+                        background: `${color}20`,
+                        color: color,
+                    }}>
+                        <Activity size={24} />
+                    </div>
+                    <div style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        color: color,
+                        border: `1px solid ${color}40`,
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '100px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                    }}>
+                        Detected
+                    </div>
+                </div>
+                <h3 style={{
+                    fontSize: '1.75rem',
+                    fontWeight: 600,
+                    color: 'var(--color-text-main)',
+                    marginBottom: '0.5rem',
+                }}>
+                    {title}
+                </h3>
             </div>
 
-            <div>
-                <h4 style={{
-                    color: 'var(--color-text-muted)',
-                    marginBottom: '1rem',
-                    fontSize: '0.85rem',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.1em'
-                }}>
-                    Treatment
-                </h4>
-                <p style={{
-                    color: 'var(--color-text-main)',
-                    lineHeight: 1.6,
-                    fontSize: isMobile ? '0.9rem' : '1rem',
-                }}>
-                    {treatment}
-                </p>
+            <div style={{ padding: '2rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                <div>
+                    <h4 style={{
+                        color: 'var(--color-text-muted)',
+                        marginBottom: '1rem',
+                        fontSize: '0.75rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                    }}>
+                        <AlertCircle size={14} /> Symptoms
+                    </h4>
+                    <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {symptoms.map((s, i) => (
+                            <li key={i} style={{ 
+                                display: 'flex', 
+                                gap: '0.75rem', 
+                                fontSize: '0.95rem',
+                                color: 'var(--color-text-main)',
+                                lineHeight: 1.5,
+                            }}>
+                                <span style={{ color: color, marginTop: '0.25rem' }}>•</span> {s}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div style={{ marginTop: 'auto' }}>
+                    <h4 style={{
+                        color: 'var(--color-text-muted)',
+                        marginBottom: '1rem',
+                        fontSize: '0.75rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                    }}>
+                        <CheckCircle size={14} /> Treatment
+                    </h4>
+                    <p style={{
+                        color: 'var(--color-text-muted)',
+                        lineHeight: 1.6,
+                        fontSize: '0.95rem',
+                        background: 'rgba(255,255,255,0.02)',
+                        padding: '1rem',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(255,255,255,0.03)',
+                    }}>
+                        {treatment}
+                    </p>
+                </div>
             </div>
         </motion.div>
     );

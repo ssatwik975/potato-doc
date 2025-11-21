@@ -9,8 +9,8 @@ export const Hero = () => {
     const { isMobile } = useBreakpoint();
 
     // Always call hooks - React rules of hooks require this
-    const yTransform = useTransform(scrollY, [0, 500], [0, 200]);
-    const opacityTransform = useTransform(scrollY, [0, 300], [1, 0]);
+    const yTransform = useTransform(scrollY, [0, 1000], [0, 400]);
+    const opacityTransform = useTransform(scrollY, [0, 800], [1, 0]);
 
     // Use conditionally in styles
     const y = isMobile ? 0 : yTransform;
@@ -98,7 +98,7 @@ export const Hero = () => {
                         color: 'var(--color-text-muted)',
                         letterSpacing: '0.05em'
                     }}>
-                        SERVER STATUS: ONLINE
+                        All servers are <span style={{ color: 'var(--color-primary)' }}>online</span>
                     </span>
                 </motion.div>
 
@@ -106,14 +106,23 @@ export const Hero = () => {
                     fontSize: isMobile ? 'clamp(2.5rem, 12vw, 4rem)' : 'clamp(3rem, 8vw, 7rem)',
                     lineHeight: 0.9,
                     marginBottom: isMobile ? '1.5rem' : '2rem',
-                    background: 'linear-gradient(180deg, var(--color-text-main) 0%, rgba(255,255,255,0.7) 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
+                    background: 'var(--hero-text-gradient)',
+                    WebkitBackgroundClip: 'var(--hero-text-clip)',
+                    WebkitTextFillColor: 'var(--hero-text-fill)',
+                    color: 'var(--color-text-main)', // Fallback
                     letterSpacing: '-0.04em',
                     paddingBottom: '0.2em', // Prevent clipping of italic text
                 }}>
                     Diagnose Crops <br />
-                    <span style={{ fontStyle: 'italic', fontFamily: 'serif', fontWeight: 400, color: 'var(--color-primary)' }}>Instantly.</span>
+                    <span style={{ 
+                        fontStyle: 'italic', 
+                        fontFamily: 'serif', 
+                        fontWeight: 400, 
+                        background: 'var(--hero-instantly-gradient)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'var(--hero-instantly-fill)',
+                        color: 'var(--color-primary)' // Fallback
+                    }}>Instantly</span>
                 </h1>
 
                 <p style={{
@@ -148,14 +157,15 @@ export const Hero = () => {
                                 padding: isMobile ? '1rem 2rem' : '1.2rem 2.5rem',
                                 borderRadius: '3rem',
                                 background: 'var(--color-primary)',
-                                color: '#000',
+                                color: 'var(--button-text-color)',
                                 fontSize: isMobile ? '1rem' : '1.1rem',
                                 fontWeight: 600,
                                 border: 'none',
+                                cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                gap: '0.8rem',
+                                gap: '0.5rem',
                             }}
                         >
                             Start Diagnosis <ArrowRight size={20} />
