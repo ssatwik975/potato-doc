@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Leaf, Github, Sun, Moon, Activity, BarChart2, Scan } from 'lucide-react';
+import { Leaf, Github, Sun, Moon, Activity, BarChart2, Scan, Home, Sparkles } from 'lucide-react';
 import { useBreakpoint } from '../../hooks/useMediaQuery';
 
 export const Navbar = () => {
@@ -31,7 +31,7 @@ export const Navbar = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            const sections = ['diagnosis', 'diseases', 'statistics'];
+            const sections = ['home', 'diagnosis', 'assistant', 'diseases', 'statistics'];
             const scrollPosition = window.scrollY + 300; // Offset for better triggering
 
             for (const section of sections) {
@@ -179,7 +179,7 @@ export const Navbar = () => {
                         alignItems: 'center',
                     }}
                 >
-                    {['Diagnosis', 'Diseases', 'Statistics'].map((item) => {
+                    {['Home', 'Diagnosis', 'Assistant', 'Diseases', 'Statistics'].map((item) => {
                         const isActive = activeSection === item.toLowerCase();
                         return (
                             <motion.button
@@ -232,7 +232,7 @@ export const Navbar = () => {
                         transition: 'transform 0.28s var(--ease-smooth), opacity 0.24s var(--ease-smooth)',
                     }}
                 >
-                    {['Diagnosis', 'Diseases', 'Statistics'].map((item) => {
+                    {['Home', 'Diagnosis', 'Assistant', 'Diseases', 'Statistics'].map((item) => {
                         const isActive = activeSection === item.toLowerCase();
                         return (
                             <motion.button
@@ -253,7 +253,9 @@ export const Navbar = () => {
                                     transition: 'all 0.3s',
                                 }}
                             >
+                                {item === 'Home' && <Home size={20} />}
                                 {item === 'Diagnosis' && <Scan size={20} />}
+                                {item === 'Assistant' && <Sparkles size={20} />}
                                 {item === 'Diseases' && <Activity size={20} />}
                                 {item === 'Statistics' && <BarChart2 size={20} />}
                             </motion.button>

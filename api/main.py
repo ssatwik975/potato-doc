@@ -1,3 +1,11 @@
+import sys
+import importlib.metadata
+import importlib_metadata
+
+# Monkeypatch importlib.metadata.packages_distributions for Python < 3.10
+if not hasattr(importlib.metadata, 'packages_distributions'):
+    importlib.metadata.packages_distributions = importlib_metadata.packages_distributions
+
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,7 +33,7 @@ generation_config = {
   "max_output_tokens": 2048,
 }
 
-model = genai.GenerativeModel(model_name="gemini-1.5-flash", generation_config=generation_config)
+model = genai.GenerativeModel(model_name="gemini-2.5-flash-lite", generation_config=generation_config)
 
 origins = [
     "http://localhost",
@@ -72,9 +80,11 @@ async def predict(
         'confidence': float(confidence)
     }
 
+from typing import Optional
+
 class ChatRequest(BaseModel):
     message: str
-    context: str = None
+    context: Optional[str] = None
 
 @app.post("/chat")
 async def chat(request: ChatRequest):
@@ -85,7 +95,9 @@ async def chat(request: ChatRequest):
         Traits:
         - Professional yet accessible.
         - Highly knowledgeable about Early Blight, Late Blight, and general crop health.
-        - Concise and practical.
+        - Concise and conversational. Speak naturally like a human expert, not a robot.
+        - Avoid excessive bulleted lists. Use paragraphs and natural language to explain things briefly.
+        - Only use lists if describing a strict step-by-step process.
         
         If a context is provided (e.g., "Early Blight detected"), tailor your advice specifically to that diagnosis.
         If the user asks about something unrelated to agriculture or potatoes, politely steer them back to the topic.
@@ -103,6 +115,9 @@ async def chat(request: ChatRequest):
         response = chat.send_message(user_message)
         return {"response": response.text}
     except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print(f"Error in chat endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":

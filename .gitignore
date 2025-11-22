@@ -5,3 +5,6 @@ __pycache__/
 *.pyc
 myenv
 *.tar.xz
+.venv
+env/
+.env

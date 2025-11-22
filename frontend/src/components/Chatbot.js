@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Bot, User, Sparkles } from 'lucide-react';
+import { MessageSquare, X, Send, Sparkles, User } from 'lucide-react';
 import axios from 'axios';
 import { useDiagnosis } from '../context/DiagnosisContext';
 import { useBreakpoint } from '../hooks/useMediaQuery';
@@ -52,7 +52,7 @@ export const Chatbot = () => {
         try {
             // Determine API URL (localhost vs production)
             const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                ? '/chat'
+                ? 'http://localhost:8000/chat'
                 : 'https://micti-potato-disease-classification.hf.space/chat'; // Assuming this endpoint exists on prod too
 
             const context = diagnosis ? (diagnosis.class || diagnosis.label || diagnosis.prediction) : null;
@@ -144,7 +144,7 @@ export const Chatbot = () => {
                                 justifyContent: 'center',
                                 color: 'var(--color-primary)'
                             }}>
-                                <Bot size={24} />
+                                <Sparkles size={24} />
                             </div>
                             <div>
                                 <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>Potato Doc AI</h3>
