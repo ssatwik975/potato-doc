@@ -3,17 +3,6 @@ import json
 import os
 import google.generativeai as genai
 
-# Configure Gemini
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-generation_config = {
-    "temperature": 0.7,
-    "top_p": 1,
-    "top_k": 1,
-    "max_output_tokens": 2048,
-}
-
-model = genai.GenerativeModel(model_name="gemini-2.0-flash-exp", generation_config=generation_config)
-
 class handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200)
@@ -24,6 +13,23 @@ class handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         try:
+            # Check API Key
+            api_key = os.getenv("GOOGLE_API_KEY")
+            if not api_key:
+                raise ValueError("GOOGLE_API_KEY environment variable is not set")
+
+            # Configure Gemini
+            genai.configure(api_key=api_key)
+            generation_config = {
+                "temperature": 0.7,
+                "top_p": 1,
+                "top_k": 1,
+                "max_output_tokens": 2048,
+            }
+            
+            # Use flash model which is generally available
+            model = genai.GenerativeModel(model_name="gemini-2.5-flash-lite", generation_config=generation_config)
+
             # Get content length and read body
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
@@ -69,8 +75,10 @@ class handler(BaseHTTPRequestHandler):
             self.wfile.write(response_data.encode('utf-8'))
             
         except Exception as e:
+            print(f"Error: {str(e)}") # Log error to Vercel logs
             self.send_response(500)
             self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             error_response = json.dumps({"error": str(e)})
             self.wfile.write(error_response.encode('utf-8'))
