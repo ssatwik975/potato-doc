@@ -1,20 +1,10 @@
 import sys
-import importlib.metadata
-import importlib_metadata
 
-# Monkeypatch importlib.metadata.packages_distributions for Python < 3.10
-if not hasattr(importlib.metadata, 'packages_distributions'):
-    importlib.metadata.packages_distributions = importlib_metadata.packages_distributions
-
-from fastapi import FastAPI, File, UploadFile, HTTPException, APIRouter
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, HTTPException, APIRouter, Request
+from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
-import numpy as np
-from io import BytesIO
-from PIL import Image
-import tensorflow as tf
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
@@ -39,7 +29,7 @@ model = genai.GenerativeModel(model_name="gemini-2.5-flash-lite", generation_con
 origins = [
     "http://localhost",
     "http://localhost:3000",
-    "https://potato-doc.vercel.app", # Add your Vercel domain here if known, or use "*"
+    "https://potato-doc.vercel.app",
     "*"
 ]
 app.add_middleware(
@@ -50,20 +40,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load model with error handling for Vercel environment where model might not be present
-MODEL = None
-try:
-    if os.path.exists("../models/1/model.keras"):
-        MODEL = tf.keras.models.load_model("../models/1/model.keras")
-    elif os.path.exists("models/1/model.keras"):
-        MODEL = tf.keras.models.load_model("models/1/model.keras")
-    else:
-        print("Warning: Model file not found. Prediction endpoint will fail.")
-except Exception as e:
-    print(f"Error loading model: {e}")
-
-CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
-
 @router.get("/")
 async def root():
     return RedirectResponse(url="/docs")
@@ -71,30 +47,6 @@ async def root():
 @router.get("/ping")
 async def ping():
     return "Hello, I am alive"
-
-def read_file_as_image(data) -> np.ndarray:
-    image = np.array(Image.open(BytesIO(data)))
-    return image
-
-@router.post("/predict")
-async def predict(
-    file: UploadFile = File(...)
-):
-    if MODEL is None:
-        raise HTTPException(status_code=503, detail="Model not loaded")
-        
-    image = read_file_as_image(await file.read())
-    img_batch = np.expand_dims(image, 0)
-    
-    predictions = MODEL.predict(img_batch)
-
-    predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
-    confidence = np.max(predictions[0])
-    
-    return {
-        'class': predicted_class,
-        'confidence': float(confidence)
-    }
 
 from typing import Optional
 
@@ -139,6 +91,11 @@ async def chat(request: ChatRequest):
 # Include router at root and at /api
 app.include_router(router)
 app.include_router(router, prefix="/api")
+
+# Fallback for Vercel 405 issues - explicitly handle OPTIONS for /api/chat if needed
+@app.options("/api/chat")
+async def chat_options():
+    return JSONResponse(content="OK", headers={"Allow": "POST, OPTIONS"})
 
 if __name__ == "__main__":
     uvicorn.run(app, host='localhost', port=8000)
