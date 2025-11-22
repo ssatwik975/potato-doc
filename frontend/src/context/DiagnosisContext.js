@@ -4,9 +4,10 @@ const DiagnosisContext = createContext();
 
 export const DiagnosisProvider = ({ children }) => {
     const [diagnosis, setDiagnosis] = useState(null);
+    const [isChatOpen, setIsChatOpen] = useState(false);
 
     return (
-        <DiagnosisContext.Provider value={{ diagnosis, setDiagnosis }}>
+        <DiagnosisContext.Provider value={{ diagnosis, setDiagnosis, isChatOpen, setIsChatOpen }}>
             {children}
         </DiagnosisContext.Provider>
     );

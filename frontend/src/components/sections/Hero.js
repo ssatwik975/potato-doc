@@ -1,12 +1,14 @@
 import React from 'react';
 import { motion, useViewportScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Activity } from 'lucide-react';
+import { ArrowRight, MessageSquare } from 'lucide-react';
 import { Magnetic } from '../layout/Magnetic';
 import { useBreakpoint } from '../../hooks/useMediaQuery';
+import { useDiagnosis } from '../../context/DiagnosisContext';
 
 export const Hero = () => {
     const { scrollY } = useViewportScroll();
     const { isMobile } = useBreakpoint();
+    const { setIsChatOpen } = useDiagnosis();
 
     // Always call hooks - React rules of hooks require this
     const yTransform = useTransform(scrollY, [0, 1000], [0, 400]);
@@ -174,9 +176,9 @@ export const Hero = () => {
 
                     <Magnetic disabled={isMobile}>
                         <motion.button
-                            onClick={() => scrollToSection('statistics')}
                             whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             whileTap={{ scale: 0.95 }}
+                            onClick={() => setIsChatOpen(true)}
                             style={{
                                 width: isMobile ? '100%' : 'auto',
                                 padding: isMobile ? '1rem 2rem' : '1.2rem 2.5rem',
@@ -190,9 +192,10 @@ export const Hero = () => {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 gap: '0.8rem',
+                                cursor: 'pointer',
                             }}
                         >
-                            View Statistics <Activity size={20} />
+                            Ask AI Assistant <MessageSquare size={20} />
                         </motion.button>
                     </Magnetic>
                 </div>

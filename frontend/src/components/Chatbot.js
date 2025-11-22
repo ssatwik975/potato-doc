@@ -6,13 +6,12 @@ import { useDiagnosis } from '../context/DiagnosisContext';
 import { useBreakpoint } from '../hooks/useMediaQuery';
 
 export const Chatbot = () => {
-    const [isOpen, setIsOpen] = useState(false);
+    const { diagnosis, isChatOpen, setIsChatOpen } = useDiagnosis();
     const [messages, setMessages] = useState([
         { role: 'bot', text: "Hi! I'm Potato Doc. Ask me anything about your potato crops or scan results!" }
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { diagnosis } = useDiagnosis();
     const { isMobile } = useBreakpoint();
     const messagesEndRef = useRef(null);
 
@@ -37,9 +36,9 @@ export const Chatbot = () => {
                     text: `I see you've just scanned a plant. The result is **${diagnosisName}** with ${confidenceText} confidence. How can I help you with this?` 
                 }
             ]);
-            setIsOpen(true);
+            setIsChatOpen(true);
         }
-    }, [diagnosis]);
+    }, [diagnosis, setIsChatOpen]);
 
     const handleSend = async (e) => {
         e.preventDefault();
@@ -80,7 +79,7 @@ export const Chatbot = () => {
                 animate={{ scale: 1 }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsChatOpen(!isChatOpen)}
                 style={{
                     position: 'fixed',
                     bottom: '2rem',
@@ -99,12 +98,12 @@ export const Chatbot = () => {
                     color: '#000'
                 }}
             >
-                {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
+                {isChatOpen ? <X size={24} /> : <MessageSquare size={24} />}
             </motion.button>
 
             {/* Chat Window */}
             <AnimatePresence>
-                {isOpen && (
+                {isChatOpen && (
                     <motion.div
                         initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
