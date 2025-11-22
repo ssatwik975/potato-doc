@@ -6,7 +6,7 @@ import importlib_metadata
 if not hasattr(importlib.metadata, 'packages_distributions'):
     importlib.metadata.packages_distributions = importlib_metadata.packages_distributions
 
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, APIRouter
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -22,6 +22,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI()
+router = APIRouter()
 
 # Configure Gemini
 # Ensure you have GOOGLE_API_KEY in your .env file
@@ -38,6 +39,8 @@ model = genai.GenerativeModel(model_name="gemini-2.5-flash-lite", generation_con
 origins = [
     "http://localhost",
     "http://localhost:3000",
+    "https://potato-doc.vercel.app", # Add your Vercel domain here if known, or use "*"
+    "*"
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -47,15 +50,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODEL = tf.keras.models.load_model("../models/1/model.keras")
+# Load model with error handling for Vercel environment where model might not be present
+MODEL = None
+try:
+    if os.path.exists("../models/1/model.keras"):
+        MODEL = tf.keras.models.load_model("../models/1/model.keras")
+    elif os.path.exists("models/1/model.keras"):
+        MODEL = tf.keras.models.load_model("models/1/model.keras")
+    else:
+        print("Warning: Model file not found. Prediction endpoint will fail.")
+except Exception as e:
+    print(f"Error loading model: {e}")
 
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 
-@app.get("/")
+@router.get("/")
 async def root():
     return RedirectResponse(url="/docs")
 
-@app.get("/ping")
+@router.get("/ping")
 async def ping():
     return "Hello, I am alive"
 
@@ -63,10 +76,13 @@ def read_file_as_image(data) -> np.ndarray:
     image = np.array(Image.open(BytesIO(data)))
     return image
 
-@app.post("/predict")
+@router.post("/predict")
 async def predict(
     file: UploadFile = File(...)
 ):
+    if MODEL is None:
+        raise HTTPException(status_code=503, detail="Model not loaded")
+        
     image = read_file_as_image(await file.read())
     img_batch = np.expand_dims(image, 0)
     
@@ -86,7 +102,7 @@ class ChatRequest(BaseModel):
     message: str
     context: Optional[str] = None
 
-@app.post("/chat")
+@router.post("/chat")
 async def chat(request: ChatRequest):
     try:
         system_prompt = """You are 'Potato Doc', an expert agricultural AI assistant specializing in potato crops. 
@@ -119,6 +135,10 @@ async def chat(request: ChatRequest):
         traceback.print_exc()
         print(f"Error in chat endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# Include router at root and at /api
+app.include_router(router)
+app.include_router(router, prefix="/api")
 
 if __name__ == "__main__":
     uvicorn.run(app, host='localhost', port=8000)

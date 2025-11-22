@@ -107,7 +107,12 @@ export const Assistant = () => {
                 ? `User just scanned a plant. Diagnosis: ${diagnosis.class} (Confidence: ${(diagnosis.confidence * 100).toFixed(1)}%).` 
                 : null;
 
-            const response = await axios.post('http://localhost:8000/chat', {
+            // Use relative path for production (Vercel) and absolute for local dev
+            const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:8000/api/chat'
+                : '/api/chat';
+
+            const response = await axios.post(API_URL, {
                 message: userMessage,
                 context: context
             });
