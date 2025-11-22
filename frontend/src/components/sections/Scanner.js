@@ -52,8 +52,7 @@ const Scanner = () => {
         setLoading(true);
         setError(null);
 
-        // FIX: Direct URL usage
-        // Ensure no trailing slash in the URL
+        // FIX: Changed http to https to resolve Mixed Content error
         const API_URL = 'https://micti-potato-disease-classification.hf.space'; 
         
         // Debugging: This will show up in Console (F12) if the new code is running
