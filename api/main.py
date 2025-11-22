@@ -6,18 +6,24 @@ import importlib_metadata
 if not hasattr(importlib.metadata, 'packages_distributions'):
     importlib.metadata.packages_distributions = importlib_metadata.packages_distributions
 
-from fastapi import FastAPI, File, UploadFile, HTTPException, APIRouter
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, File, UploadFile, HTTPException, APIRouter, Request
+from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
 import numpy as np
 from io import BytesIO
 from PIL import Image
-import tensorflow as tf
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
+
+# Lazy load tensorflow to prevent Vercel timeout/size issues if not needed immediately
+tf = None
+try:
+    import tensorflow as tf
+except ImportError:
+    print("TensorFlow not found. Prediction endpoint will be disabled.")
 
 load_dotenv()
 
@@ -39,7 +45,7 @@ model = genai.GenerativeModel(model_name="gemini-2.5-flash-lite", generation_con
 origins = [
     "http://localhost",
     "http://localhost:3000",
-    "https://potato-doc.vercel.app", # Add your Vercel domain here if known, or use "*"
+    "https://potato-doc.vercel.app",
     "*"
 ]
 app.add_middleware(
@@ -52,15 +58,16 @@ app.add_middleware(
 
 # Load model with error handling for Vercel environment where model might not be present
 MODEL = None
-try:
-    if os.path.exists("../models/1/model.keras"):
-        MODEL = tf.keras.models.load_model("../models/1/model.keras")
-    elif os.path.exists("models/1/model.keras"):
-        MODEL = tf.keras.models.load_model("models/1/model.keras")
-    else:
-        print("Warning: Model file not found. Prediction endpoint will fail.")
-except Exception as e:
-    print(f"Error loading model: {e}")
+if tf:
+    try:
+        if os.path.exists("../models/1/model.keras"):
+            MODEL = tf.keras.models.load_model("../models/1/model.keras")
+        elif os.path.exists("models/1/model.keras"):
+            MODEL = tf.keras.models.load_model("models/1/model.keras")
+        else:
+            print("Warning: Model file not found. Prediction endpoint will fail.")
+    except Exception as e:
+        print(f"Error loading model: {e}")
 
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 
@@ -81,7 +88,7 @@ async def predict(
     file: UploadFile = File(...)
 ):
     if MODEL is None:
-        raise HTTPException(status_code=503, detail="Model not loaded")
+        raise HTTPException(status_code=503, detail="Model not loaded or TensorFlow unavailable")
         
     image = read_file_as_image(await file.read())
     img_batch = np.expand_dims(image, 0)
@@ -139,6 +146,11 @@ async def chat(request: ChatRequest):
 # Include router at root and at /api
 app.include_router(router)
 app.include_router(router, prefix="/api")
+
+# Fallback for Vercel 405 issues - explicitly handle OPTIONS for /api/chat if needed
+@app.options("/api/chat")
+async def chat_options():
+    return JSONResponse(content="OK", headers={"Allow": "POST, OPTIONS"})
 
 if __name__ == "__main__":
     uvicorn.run(app, host='localhost', port=8000)
