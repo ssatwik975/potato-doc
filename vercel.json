@@ -9,14 +9,18 @@
       }
     },
     {
-      "src": "api/main.py",
+      "src": "api/index.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
+      "src": "/api/chat",
+      "dest": "api/index.py"
+    },
+    {
       "src": "/api/(.*)",
-      "dest": "api/main.py"
+      "dest": "api/index.py"
     },
     {
       "src": "/(.*)",
