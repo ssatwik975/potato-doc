@@ -17,15 +17,16 @@
       "dest": "/api/chat.py"
     },
     {
-      "src": "/((?!api).*)",
-      "dest": "/frontend/build/$1"
+      "src": "/static/(.*)",
+      "dest": "/frontend/static/$1"
     },
     {
-      "handle": "filesystem"
+      "src": "/(.*)\\.(.*)",
+      "dest": "/frontend/$1.$2"
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/build/index.html"
+      "dest": "/frontend/index.html"
     }
   ]
 }
