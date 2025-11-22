@@ -45,7 +45,7 @@ export const Footer = () => {
                 {/* Main footer content */}
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
+                    gridTemplateColumns: isMobile ? '1fr' : '1.5fr 0.75fr 0.75fr 1.5fr',
                     gap: isMobile ? '3rem' : '4rem',
                     padding: isMobile ? '3rem 0' : '5rem 0 3rem',
                 }}>
