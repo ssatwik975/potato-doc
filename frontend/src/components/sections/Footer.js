@@ -1,17 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Leaf, Mail, Github, Twitter, Linkedin, ArrowRight } from 'lucide-react';
+import { Leaf, Github, Twitter, Linkedin } from 'lucide-react';
 import { useBreakpoint } from '../../hooks/useMediaQuery';
 
 export const Footer = () => {
-    const [email, setEmail] = useState('');
     const { isMobile } = useBreakpoint();
-
-    const handleSubscribe = (e) => {
-        e.preventDefault();
-        alert('Newsletter subscription coming soon!');
-        setEmail('');
-    };
 
     return (
         <footer style={{
@@ -176,7 +169,7 @@ export const Footer = () => {
                         </ul>
                     </div>
 
-                    {/* Column 4: Newsletter */}
+                    {/* Column 4: Creators */}
                     <div>
                         <h4 style={{
                             color: 'var(--color-text-main)',
@@ -184,69 +177,67 @@ export const Footer = () => {
                             fontSize: '1rem',
                             fontWeight: 600,
                         }}>
-                            Stay Updated
+                            Creators
                         </h4>
-                        <p style={{
-                            color: 'var(--color-text-muted)',
-                            fontSize: '0.85rem',
-                            marginBottom: '1rem',
-                            lineHeight: 1.6,
-                        }}>
-                            Subscribe for crop health insights and AI updates.
-                        </p>
-                        <form onSubmit={handleSubscribe} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                            <div style={{ position: 'relative' }}>
-                                <Mail
-                                    size={18}
-                                    style={{
-                                        position: 'absolute',
-                                        left: '1rem',
-                                        top: '50%',
-                                        transform: 'translateY(-50%)',
-                                        color: 'var(--color-text-muted)',
-                                    }}
-                                />
-                                <input
-                                    type="email"
-                                    placeholder="your@email.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    style={{
-                                        width: '100%',
-                                        padding: '0.8rem 1rem 0.8rem 3rem',
-                                        borderRadius: '0.5rem',
-                                        border: '1px solid var(--glass-border)',
-                                        background: 'var(--glass-bg)',
-                                        color: 'var(--color-text-main)',
-                                        fontSize: '0.9rem',
-                                        outline: 'none',
-                                        transition: 'border-color 0.3s',
-                                    }}
-                                    onFocus={(e) => e.target.style.borderColor = 'var(--color-primary)'}
-                                    onBlur={(e) => e.target.style.borderColor = 'var(--glass-border)'}
-                                />
-                            </div>
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                type="submit"
-                                style={{
-                                    padding: '0.8rem 1.5rem',
-                                    borderRadius: '0.5rem',
-                                    background: 'var(--color-primary)',
-                                    color: '#000',
-                                    border: 'none',
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                            {/* Satwik Singh */}
+                            <div>
+                                <p style={{
+                                    color: 'var(--color-text-main)',
                                     fontSize: '0.9rem',
-                                    fontWeight: 600,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '0.5rem',
-                                }}
-                            >
-                                Subscribe <ArrowRight size={16} />
-                            </motion.button>
-                        </form>
+                                    fontWeight: 500,
+                                    marginBottom: '0.5rem',
+                                }}>
+                                    Satwik Singh
+                                </p>
+                                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                    <a
+                                        href="https://github.com/ssatwik975"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ color: 'var(--color-text-muted)', transition: 'color 0.3s' }}
+                                        onMouseEnter={(e) => e.target.style.color = 'var(--color-primary)'}
+                                        onMouseLeave={(e) => e.target.style.color = 'var(--color-text-muted)'}
+                                    >
+                                        <Github size={18} />
+                                    </a>
+                                    <a
+                                        href="https://linkedin.com/in/singhsatwik"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ color: 'var(--color-text-muted)', transition: 'color 0.3s' }}
+                                        onMouseEnter={(e) => e.target.style.color = 'var(--color-primary)'}
+                                        onMouseLeave={(e) => e.target.style.color = 'var(--color-text-muted)'}
+                                    >
+                                        <Linkedin size={18} />
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Arpit Raj */}
+                            <div>
+                                <p style={{
+                                    color: 'var(--color-text-main)',
+                                    fontSize: '0.9rem',
+                                    fontWeight: 500,
+                                    marginBottom: '0.5rem',
+                                }}>
+                                    Arpit Raj
+                                </p>
+                                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                    <a
+                                        href="https://github.com/M1CTIAN"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ color: 'var(--color-text-muted)', transition: 'color 0.3s' }}
+                                        onMouseEnter={(e) => e.target.style.color = 'var(--color-primary)'}
+                                        onMouseLeave={(e) => e.target.style.color = 'var(--color-text-muted)'}
+                                    >
+                                        <Github size={18} />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
