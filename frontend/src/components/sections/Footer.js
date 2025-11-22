@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Leaf, Github, Twitter, Linkedin } from 'lucide-react';
+import { Leaf, Github } from 'lucide-react';
 import { useBreakpoint } from '../../hooks/useMediaQuery';
 
 export const Footer = () => {
@@ -70,43 +70,36 @@ export const Footer = () => {
                         }}>
                             AI-powered plant pathology platform protecting global crop health.
                         </p>
-                        <div style={{ display: 'flex', gap: '1rem' }}>
-                            {[
-                                { Icon: Twitter, href: '#' },
-                                { Icon: Linkedin, href: '#' },
-                                { Icon: Github, href: 'https://github.com/ssatwik975/potato-doc' },
-                            ].map(({ Icon, href }, i) => (
-                                <motion.a
-                                    key={i}
-                                    href={href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    whileHover={{ scale: 1.1, y: -2 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    style={{
-                                        width: '40px',
-                                        height: '40px',
-                                        borderRadius: '50%',
-                                        border: '1px solid var(--glass-border)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        color: 'var(--color-text-muted)',
-                                        transition: 'all 0.3s',
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.borderColor = 'var(--color-primary)';
-                                        e.currentTarget.style.color = 'var(--color-primary)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.borderColor = 'var(--glass-border)';
-                                        e.currentTarget.style.color = 'var(--color-text-muted)';
-                                    }}
-                                >
-                                    <Icon size={18} />
-                                </motion.a>
-                            ))}
-                        </div>
+                        <motion.a
+                            href="https://github.com/ssatwik975/potato-doc"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '0.75rem',
+                                padding: '0.75rem 1.5rem',
+                                borderRadius: '50px',
+                                border: '1px solid var(--glass-border)',
+                                color: 'var(--color-text-main)',
+                                transition: 'all 0.3s',
+                                textDecoration: 'none',
+                                width: 'fit-content',
+                                background: 'rgba(255, 255, 255, 0.03)',
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = 'var(--color-text-muted)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = 'var(--glass-border)';
+                            }}
+                        >
+                            <Github size={20} />
+                            <span style={{ fontWeight: 500 }}>Source Code</span>
+                        </motion.a>
                     </div>
 
                     {/* Column 2: Quick Links */}
@@ -179,64 +172,65 @@ export const Footer = () => {
                         }}>
                             Creators
                         </h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                            {/* Satwik Singh */}
-                            <div>
-                                <p style={{
-                                    color: 'var(--color-text-main)',
-                                    fontSize: '0.9rem',
-                                    fontWeight: 500,
-                                    marginBottom: '0.5rem',
-                                }}>
-                                    Satwik Singh
-                                </p>
-                                <div style={{ display: 'flex', gap: '0.75rem' }}>
-                                    <a
-                                        href="https://github.com/ssatwik975"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{ color: 'var(--color-text-muted)', transition: 'color 0.3s' }}
-                                        onMouseEnter={(e) => e.target.style.color = 'var(--color-primary)'}
-                                        onMouseLeave={(e) => e.target.style.color = 'var(--color-text-muted)'}
-                                    >
-                                        <Github size={18} />
-                                    </a>
-                                    <a
-                                        href="https://linkedin.com/in/singhsatwik"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{ color: 'var(--color-text-muted)', transition: 'color 0.3s' }}
-                                        onMouseEnter={(e) => e.target.style.color = 'var(--color-primary)'}
-                                        onMouseLeave={(e) => e.target.style.color = 'var(--color-text-muted)'}
-                                    >
-                                        <Linkedin size={18} />
-                                    </a>
-                                </div>
-                            </div>
-
-                            {/* Arpit Raj */}
-                            <div>
-                                <p style={{
-                                    color: 'var(--color-text-main)',
-                                    fontSize: '0.9rem',
-                                    fontWeight: 500,
-                                    marginBottom: '0.5rem',
-                                }}>
-                                    Arpit Raj
-                                </p>
-                                <div style={{ display: 'flex', gap: '0.75rem' }}>
-                                    <a
-                                        href="https://github.com/M1CTIAN"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{ color: 'var(--color-text-muted)', transition: 'color 0.3s' }}
-                                        onMouseEnter={(e) => e.target.style.color = 'var(--color-primary)'}
-                                        onMouseLeave={(e) => e.target.style.color = 'var(--color-text-muted)'}
-                                    >
-                                        <Github size={18} />
-                                    </a>
-                                </div>
-                            </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            {[
+                                { name: 'Satwik Singh', username: 'ssatwik975', url: 'https://github.com/ssatwik975' },
+                                { name: 'Arpit Raj', username: 'M1CTIAN', url: 'https://github.com/M1CTIAN' }
+                            ].map((creator) => (
+                                <motion.a
+                                    key={creator.username}
+                                    href={creator.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    whileHover={{ x: 5, backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
+                                    whileTap={{ scale: 0.98 }}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '1rem',
+                                        padding: '0.5rem',
+                                        paddingRight: '1.5rem',
+                                        borderRadius: '50px',
+                                        border: '1px solid transparent',
+                                        background: 'transparent',
+                                        textDecoration: 'none',
+                                        transition: 'all 0.3s ease',
+                                    }}
+                                >
+                                    <img 
+                                        src={`https://github.com/${creator.username}.png`} 
+                                        alt={creator.name}
+                                        style={{
+                                            width: '42px',
+                                            height: '42px',
+                                            borderRadius: '50%',
+                                            background: 'var(--glass-bg)',
+                                        }}
+                                    />
+                                    <div>
+                                        <p style={{ 
+                                            color: 'var(--color-text-main)', 
+                                            fontWeight: 600, 
+                                            fontSize: '0.95rem',
+                                            margin: 0,
+                                            lineHeight: '1.2'
+                                        }}>
+                                            {creator.name}
+                                        </p>
+                                        <p style={{ 
+                                            color: 'var(--color-text-muted)', 
+                                            fontSize: '0.8rem', 
+                                            margin: 0,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.25rem',
+                                            opacity: 0.8
+                                        }}>
+                                            @{creator.username}
+                                        </p>
+                                    </div>
+                                </motion.a>
+                            ))}
                         </div>
                     </div>
                 </div>
