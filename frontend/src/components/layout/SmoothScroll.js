@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from "react";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import React from "react";
 
 export const SmoothScroll = ({ children }) => {
     // A simple smooth scroll implementation using Framer Motion

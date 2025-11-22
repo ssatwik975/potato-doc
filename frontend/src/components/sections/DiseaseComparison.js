@@ -15,8 +15,8 @@ const ClassCard = ({ title, subtitle, icon: Icon, color, delay }) => {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ delay, duration: 0.5 }}
             style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.05)',
+            background: 'var(--glass-bg)',
+            border: '1px solid var(--glass-border)',
             borderRadius: '16px',
             padding: '1.5rem',
             display: 'flex',
