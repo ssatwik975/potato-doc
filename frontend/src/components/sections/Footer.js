@@ -172,7 +172,7 @@ export const Footer = () => {
                         }}>
                             Creators
                         </h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '1rem' }}>
                             {[
                                 { name: 'Satwik Singh', username: 'ssatwik975', url: 'https://github.com/ssatwik975' },
                                 { name: 'Arpit Raj', username: 'M1CTIAN', url: 'https://github.com/M1CTIAN' }
