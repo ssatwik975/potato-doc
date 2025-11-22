@@ -1,11 +1,18 @@
 {
-  "buildCommand": "npm install && npm run build",
-  "outputDirectory": "build",
-  "installCommand": "npm install",
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "build" }
+    },
+    {
+      "src": "api/chat.py",
+      "use": "@vercel/python"
     }
+  ],
+  "routes": [
+    { "src": "/api/chat", "dest": "/api/chat.py" },
+    { "src": "/(.*)", "dest": "/frontend/build/$1" }
   ]
 }
