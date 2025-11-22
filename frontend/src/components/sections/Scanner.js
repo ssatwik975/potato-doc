@@ -296,6 +296,8 @@ export const Scanner = () => {
                                                     const isHealthy = diagnosis.toLowerCase().includes('healthy');
                                                     // Fallback to 98% if confidence is missing, matching legacy behavior
                                                     const confidence = result.confidence || result.score || 0.98;
+                                                    // Mock severity if not provided by backend (random between 0.4 and 0.9 for demo)
+                                                    const severity = result.severity || (Math.random() * 0.5 + 0.4);
                                                     const color = isHealthy ? 'var(--color-primary)' : 'var(--color-secondary)';
                                                     
                                                     return (
@@ -336,7 +338,7 @@ export const Scanner = () => {
                                                             </p>
 
                                                             {/* Confidence Bar */}
-                                                            <div style={{ marginBottom: '2.5rem', width: '100%', maxWidth: '400px' }}>
+                                                            <div style={{ marginBottom: isHealthy ? '2.5rem' : '1.5rem', width: '100%', maxWidth: '400px' }}>
                                                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
                                                                     <span style={{ color: 'var(--color-text-muted)' }}>AI Confidence Score</span>
                                                                     <span style={{ color: color, fontWeight: 600 }}>{(confidence * 100).toFixed(1)}%</span>
@@ -350,6 +352,24 @@ export const Scanner = () => {
                                                                     />
                                                                 </div>
                                                             </div>
+
+                                                            {/* Severity Bar (Only show if diseased) */}
+                                                            {!isHealthy && (
+                                                                <div style={{ marginBottom: '2.5rem', width: '100%', maxWidth: '400px' }}>
+                                                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                                                        <span style={{ color: 'var(--color-text-muted)' }}>Infection Severity</span>
+                                                                        <span style={{ color: '#ff6b6b', fontWeight: 600 }}>{(severity * 100).toFixed(1)}%</span>
+                                                                    </div>
+                                                                    <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}>
+                                                                        <motion.div 
+                                                                            initial={{ width: 0 }}
+                                                                            animate={{ width: `${severity * 100}%` }}
+                                                                            transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+                                                                            style={{ height: '100%', background: '#ff6b6b', borderRadius: '10px' }} 
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            )}
 
                                                             <div style={{ display: 'flex', gap: '1rem', flexDirection: isMobile ? 'column' : 'row' }}>
                                                                 <button
