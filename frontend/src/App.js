@@ -7,10 +7,12 @@ import { Stats } from './components/sections/Stats';
 import { DiseaseComparison } from './components/sections/DiseaseComparison';
 import { Scanner } from './components/sections/Scanner';
 import { Footer } from './components/sections/Footer';
+import { Chatbot } from './components/Chatbot';
+import { DiagnosisProvider } from './context/DiagnosisContext';
 
 function App() {
   return (
-    <>
+    <DiagnosisProvider>
       <div className="noise-overlay"></div>
       <Cursor />
       <Navbar />
@@ -21,7 +23,8 @@ function App() {
         <Stats />
         <Footer />
       </SmoothScroll>
-    </>
+      <Chatbot />
+    </DiagnosisProvider>
   );
 }
 

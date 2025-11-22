@@ -4,12 +4,14 @@ import { Upload, Scan, CheckCircle, AlertTriangle } from 'lucide-react';
 import axios from 'axios';
 import { useInView } from '../../hooks/useInView';
 import { useBreakpoint } from '../../hooks/useMediaQuery';
+import { useDiagnosis } from '../../context/DiagnosisContext';
 
 export const Scanner = () => {
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState(null);
     const [scanning, setScanning] = useState(false);
     const [result, setResult] = useState(null);
+    const { setDiagnosis } = useDiagnosis();
     const fileInputRef = useRef(null);
 
     const containerRef = useRef(null);
@@ -46,6 +48,7 @@ export const Scanner = () => {
 
             console.log("API Response:", response.data); // Debugging
             setResult(response.data);
+            setDiagnosis(response.data);
         } catch (error) {
             console.error("Scan failed:", error);
             let errorMessage = "Scan failed. Please ensure the backend is running.";
