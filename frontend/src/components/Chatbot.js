@@ -95,7 +95,7 @@ export const Chatbot = () => {
                     justifyContent: 'center',
                     zIndex: 1000,
                     cursor: 'pointer',
-                    color: '#000'
+                    color: 'var(--button-text-color)'
                 }}
             >
                 {isChatOpen ? <X size={24} /> : <MessageSquare size={24} />}
@@ -114,7 +114,7 @@ export const Chatbot = () => {
                             right: isMobile ? '0' : '2rem',
                             width: isMobile ? '100%' : '400px',
                             height: isMobile ? '80vh' : '600px',
-                            background: 'rgba(10, 10, 10, 0.95)',
+                            background: 'var(--color-bg-card)',
                             backdropFilter: 'blur(20px)',
                             border: '1px solid var(--glass-border)',
                             borderRadius: isMobile ? '20px 20px 0 0' : '24px',
@@ -132,7 +132,7 @@ export const Chatbot = () => {
                             display: 'flex',
                             alignItems: 'center',
                             gap: '1rem',
-                            background: 'rgba(255,255,255,0.02)'
+                            background: 'var(--glass-highlight)'
                         }}>
                             <div style={{
                                 width: '40px',
@@ -182,7 +182,7 @@ export const Chatbot = () => {
                                         height: '32px',
                                         borderRadius: '50%',
                                         background: msg.role === 'user' ? 'var(--color-text-main)' : 'rgba(0, 255, 157, 0.1)',
-                                        color: msg.role === 'user' ? '#000' : 'var(--color-primary)',
+                                        color: msg.role === 'user' ? 'var(--color-bg-main)' : 'var(--color-primary)',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
@@ -193,8 +193,8 @@ export const Chatbot = () => {
                                     <div style={{
                                         padding: '1rem',
                                         borderRadius: msg.role === 'user' ? '20px 4px 20px 20px' : '4px 20px 20px 20px',
-                                        background: msg.role === 'user' ? 'var(--color-text-main)' : 'rgba(255,255,255,0.05)',
-                                        color: msg.role === 'user' ? '#000' : 'var(--color-text-main)',
+                                        background: msg.role === 'user' ? 'var(--color-text-main)' : 'var(--glass-bg)',
+                                        color: msg.role === 'user' ? 'var(--color-bg-main)' : 'var(--color-text-main)',
                                         fontSize: '0.95rem',
                                         lineHeight: '1.5'
                                     }}>
@@ -231,11 +231,11 @@ export const Chatbot = () => {
                                 placeholder="Ask about crop health..."
                                 style={{
                                     flex: 1,
-                                    background: 'rgba(255,255,255,0.05)',
+                                    background: 'var(--glass-bg)',
                                     border: '1px solid var(--glass-border)',
                                     borderRadius: '12px',
                                     padding: '0.8rem 1rem',
-                                    color: 'white',
+                                    color: 'var(--color-text-main)',
                                     outline: 'none',
                                     fontSize: '0.95rem'
                                 }}
@@ -254,7 +254,7 @@ export const Chatbot = () => {
                                     justifyContent: 'center',
                                     cursor: input.trim() ? 'pointer' : 'not-allowed',
                                     opacity: input.trim() ? 1 : 0.5,
-                                    color: '#000',
+                                    color: 'var(--button-text-color)',
                                     transition: 'all 0.2s'
                                 }}
                             >
