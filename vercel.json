@@ -12,7 +12,7 @@
     }
   ],
   "routes": [
-    { "src": "/api/chat", "dest": "/api/chat.py" },
-    { "src": "/(.*)", "dest": "/frontend/build/$1" }
+    { "src": "/api/chat", "dest": "api/chat.py" },
+    { "src": "/(.*)", "dest": "frontend/build/$1" }
   ]
 }
