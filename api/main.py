@@ -1,18 +1,17 @@
 import sys
 
-from fastapi import FastAPI, HTTPException, APIRouter, Request
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
+from typing import Optional
 
 load_dotenv()
 
 app = FastAPI()
-router = APIRouter()
 
 # Configure Gemini
 # Ensure you have GOOGLE_API_KEY in your .env file
@@ -40,22 +39,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@router.get("/")
-async def root():
-    return RedirectResponse(url="/docs")
-
-@router.get("/ping")
-async def ping():
-    return "Hello, I am alive"
-
-from typing import Optional
-
 class ChatRequest(BaseModel):
     message: str
     context: Optional[str] = None
 
-@router.post("/chat")
-async def chat(request: ChatRequest):
+async def process_chat(request: ChatRequest):
+    """Shared chat processing logic"""
     try:
         system_prompt = """You are 'Potato Doc', an expert agricultural AI assistant specializing in potato crops. 
         Your goal is to help farmers and users diagnose diseases, suggest treatments, and provide advice on potato farming.
@@ -88,14 +77,28 @@ async def chat(request: ChatRequest):
         print(f"Error in chat endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Include router at root and at /api
-app.include_router(router)
-app.include_router(router, prefix="/api")
+@app.get("/")
+async def root():
+    return {"message": "Potato Doc API", "status": "online"}
 
-# Fallback for Vercel 405 issues - explicitly handle OPTIONS for /api/chat if needed
-@app.options("/api/chat")
-async def chat_options():
-    return JSONResponse(content="OK", headers={"Allow": "POST, OPTIONS"})
+@app.get("/api")
+async def api_root():
+    return {"message": "Potato Doc API", "status": "online"}
+
+@app.get("/ping")
+async def ping():
+    return {"message": "Hello, I am alive"}
+
+@app.post("/chat")
+async def chat(request: ChatRequest):
+    return await process_chat(request)
+
+@app.post("/api/chat")
+async def api_chat(request: ChatRequest):
+    return await process_chat(request)
+
+# Handler for Vercel serverless - must be named 'app'
+handler = app
 
 if __name__ == "__main__":
     uvicorn.run(app, host='localhost', port=8000)
