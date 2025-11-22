@@ -5,11 +5,13 @@
   "dependencies": {
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
-    "axios": "^1.7.9",
+    "axios": "^0.27.2",
+    "framer-motion": "4.1.17",
+    "lucide-react": "^0.263.1",
     "material-ui-dropzone": "^3.5.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "^5.0.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-scripts": "5.0.1",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
@@ -35,5 +37,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "https://micti-potato-disease-classification.hf.space"
 }

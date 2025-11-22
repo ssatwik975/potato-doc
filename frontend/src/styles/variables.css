@@ -1,0 +1,140 @@
+/* Import fonts with proper fallbacks */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  /* === TYPOGRAPHY === */
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* === SPACING === */
+  --section-spacing: 8rem;
+  --container-width: 1400px;
+
+  /* === ANIMATIONS === */
+  --ease-smooth: cubic-bezier(0.6, 0.05, 0.01, 0.9);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* === DARK MODE (DEFAULT) === */
+:root,
+:root[data-theme="dark"] {
+  /* Background */
+  --color-bg-main: #0a0f0d;
+  --color-bg-dark: #050807;
+  --color-bg-card: rgba(15, 25, 18, 0.6);
+
+  /* Text */
+  --color-text-main: #ffffff;
+  --color-text-muted: #9ab5a3;
+
+  /* Primary (Neon Green) */
+  --color-primary: #00ff9d;
+  --color-primary-dim: rgba(0, 255, 157, 0.3);
+  --color-primary-glow: rgba(0, 255, 157, 0.4);
+
+  /* Secondary (Warning Orange) */
+  --color-secondary: #ff3d00;
+  --color-secondary-dim: rgba(255, 61, 0, 0.3);
+
+  /* Glass Effects */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-highlight: rgba(255, 255, 255, 0.15);
+
+  /* Shadows */
+  --shadow-glow: 0 0 40px rgba(0, 255, 157, 0.3);
+  --shadow-float: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Scanner Specific */
+  --color-bg-scanner: rgba(10, 10, 10, 0.8);
+
+  /* Hero Text */
+  --hero-text-gradient: linear-gradient(180deg, var(--color-text-main) 0%, rgba(255,255,255,0.7) 100%);
+  --hero-text-fill: transparent;
+  --hero-text-clip: text;
+  --hero-instantly-gradient: linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.5) 100%);
+  --hero-instantly-fill: transparent;
+  
+  /* Button Text */
+  --button-text-color: #000000;
+
+  /* Footer */
+  --footer-bg: var(--color-bg-dark);
+  --footer-grid: rgba(255, 255, 255, 0.03);
+  --footer-border: rgba(255, 255, 255, 0.05);
+
+  /* Navbar Active State */
+  --nav-active-bg: var(--glass-highlight);
+  --nav-active-text: var(--color-text-main);
+}
+
+/* === LIGHT MODE === */
+:root[data-theme="light"] {
+  /* Background */
+  --color-bg-main: #ffffff;
+  --color-bg-dark: #f8f9fa; /* Lighter grey for better contrast */
+  --color-bg-card: rgba(255, 255, 255, 0.9);
+
+  /* Text */
+  --color-text-main: #1a1f1c;
+  --color-text-muted: #5e6e62;
+
+  /* Primary (Darker Green for light mode) */
+  --color-primary: #00a865;
+  --color-primary-dim: rgba(0, 168, 101, 0.1);
+  --color-primary-glow: rgba(0, 168, 101, 0.2);
+
+  /* Secondary */
+  --color-secondary: #d93400;
+  --color-secondary-dim: rgba(217, 52, 0, 0.1);
+
+  /* Glass Effects (inverted for light mode) */
+  --glass-bg: rgba(255, 255, 255, 0.75); /* White tint for cleaner look */
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-highlight: rgba(0, 0, 0, 0.03);
+
+  /* Shadows */
+  --shadow-glow: 0 0 30px rgba(0, 168, 101, 0.15);
+  --shadow-float: 0 10px 40px -10px rgba(0, 0, 0, 0.08); /* Softer shadow */
+
+  /* Scanner Specific */
+  --color-bg-scanner: rgba(255, 255, 255, 0.95);
+
+  /* Hero Text */
+  --hero-text-gradient: none;
+  --hero-text-fill: var(--color-text-main);
+  --hero-text-clip: border-box;
+  --hero-instantly-gradient: none;
+  --hero-instantly-fill: var(--color-primary);
+
+  /* Button Text */
+  --button-text-color: #ffffff;
+
+  /* Footer */
+  --footer-bg: #ffffff;
+  --footer-grid: rgba(0, 0, 0, 0.03);
+  --footer-border: rgba(0, 0, 0, 0.06);
+
+  /* Navbar Active State */
+  --nav-active-bg: var(--color-primary-dim);
+  --nav-active-text: var(--color-primary);
+}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-dim);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}

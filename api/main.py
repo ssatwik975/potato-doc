@@ -1,4 +1,5 @@
 from fastapi import FastAPI, File, UploadFile
+from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import numpy as np
@@ -24,6 +25,10 @@ MODEL = tf.keras.models.load_model("../models/1/model.keras")
 
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/docs")
+
 @app.get("/ping")
 async def ping():
     return "Hello, I am alive"
@@ -43,6 +48,7 @@ async def predict(
 
     predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
     confidence = np.max(predictions[0])
+    
     return {
         'class': predicted_class,
         'confidence': float(confidence)
