@@ -1,13 +1,31 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import uvicorn
 import numpy as np
 from io import BytesIO
 from PIL import Image
 import tensorflow as tf
+import google.generativeai as genai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
+
+# Configure Gemini
+# Ensure you have GOOGLE_API_KEY in your .env file
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+generation_config = {
+  "temperature": 0.7,
+  "top_p": 1,
+  "top_k": 1,
+  "max_output_tokens": 2048,
+}
+
+model = genai.GenerativeModel(model_name="gemini-1.5-flash", generation_config=generation_config)
 
 origins = [
     "http://localhost",
@@ -53,6 +71,39 @@ async def predict(
         'class': predicted_class,
         'confidence': float(confidence)
     }
+
+class ChatRequest(BaseModel):
+    message: str
+    context: str = None
+
+@app.post("/chat")
+async def chat(request: ChatRequest):
+    try:
+        system_prompt = """You are 'Potato Doc', an expert agricultural AI assistant specializing in potato crops. 
+        Your goal is to help farmers and users diagnose diseases, suggest treatments, and provide advice on potato farming.
+        
+        Traits:
+        - Professional yet accessible.
+        - Highly knowledgeable about Early Blight, Late Blight, and general crop health.
+        - Concise and practical.
+        
+        If a context is provided (e.g., "Early Blight detected"), tailor your advice specifically to that diagnosis.
+        If the user asks about something unrelated to agriculture or potatoes, politely steer them back to the topic.
+        """
+        
+        chat = model.start_chat(history=[
+            {"role": "user", "parts": [system_prompt]},
+            {"role": "model", "parts": ["Understood. I am Potato Doc, ready to assist with potato crop diagnostics and advice."]}
+        ])
+        
+        user_message = request.message
+        if request.context:
+            user_message = f"[Context: Current scan detected {request.context}] User Question: {request.message}"
+            
+        response = chat.send_message(user_message)
+        return {"response": response.text}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     uvicorn.run(app, host='localhost', port=8000)
