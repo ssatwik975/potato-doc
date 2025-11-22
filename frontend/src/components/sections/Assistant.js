@@ -29,7 +29,7 @@ export const Assistant = () => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [messages, scrollToBottom]);
 
     // Simple Markdown Renderer
     const renderMessage = (text) => {
@@ -51,7 +51,7 @@ export const Assistant = () => {
             if (line.trim().startsWith('* ') || line.trim().startsWith('- ')) {
                 // Remove the bullet marker from the content
                 const cleanContent = content.map(c => 
-                    typeof c === 'string' ? c.replace(/^[\*\-]\s+/, '') : c
+                    typeof c === 'string' ? c.replace(/^[*-]\s+/, '') : c
                 );
                 
                 return (
