@@ -22,8 +22,5 @@
       "src": "/(.*)",
       "dest": "frontend/build/$1"
     }
-  ],
-  "env": {
-    "GOOGLE_API_KEY": "@GOOGLE_API_KEY"
-  }
+  ]
 }
