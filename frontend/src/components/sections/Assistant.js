@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Sparkles, User, Sprout, AlertCircle, ThermometerSun } from 'lucide-react';
 import axios from 'axios';
@@ -16,7 +16,7 @@ export const Assistant = () => {
     const containerRef = useRef(null);
     const isInView = useInView(containerRef, { threshold: 0.1 });
 
-    const scrollToBottom = () => {
+    const scrollToBottom = useCallback(() => {
         // Only scroll if we have more than the initial message or if it's a user interaction
         if (messages.length > 1 && messagesContainerRef.current) {
             const { scrollHeight, clientHeight } = messagesContainerRef.current;
@@ -25,11 +25,11 @@ export const Assistant = () => {
                 behavior: 'smooth'
             });
         }
-    };
+    }, [messages.length]);
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [scrollToBottom]);
 
     // Simple Markdown Renderer
     const renderMessage = (text) => {
@@ -51,7 +51,7 @@ export const Assistant = () => {
             if (line.trim().startsWith('* ') || line.trim().startsWith('- ')) {
                 // Remove the bullet marker from the content
                 const cleanContent = content.map(c => 
-                    typeof c === 'string' ? c.replace(/^[\*\-]\s+/, '') : c
+                    typeof c === 'string' ? c.replace(/^[*-]\s+/, '') : c
                 );
                 
                 return (
