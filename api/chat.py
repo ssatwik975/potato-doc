@@ -15,6 +15,13 @@ generation_config = {
 model = genai.GenerativeModel(model_name="gemini-2.0-flash-exp", generation_config=generation_config)
 
 class handler(BaseHTTPRequestHandler):
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
+
     def do_POST(self):
         try:
             # Get content length and read body
@@ -67,10 +74,3 @@ class handler(BaseHTTPRequestHandler):
             self.end_headers()
             error_response = json.dumps({"error": str(e)})
             self.wfile.write(error_response.encode('utf-8'))
-    
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.end_headers()
