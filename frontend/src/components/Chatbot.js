@@ -53,7 +53,7 @@ export const Chatbot = () => {
             // Determine API URL (localhost vs production)
             const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
                 ? 'http://localhost:8000/chat'
-                : 'https://micti-potato-disease-classification.hf.space/chat'; // Assuming this endpoint exists on prod too
+                : '/api/chat'; // Use Vercel deployed backend
 
             const context = diagnosis ? (diagnosis.class || diagnosis.label || diagnosis.prediction) : null;
 
