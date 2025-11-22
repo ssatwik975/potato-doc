@@ -51,16 +51,15 @@ const Scanner = () => {
     const scanImage = async (file) => {
         setLoading(true);
         setError(null);
+
+        // FIX: Direct URL usage (Bypassing environment variables)
+        // TODO: PASTE YOUR ACTUAL HUGGING FACE LINK HERE ↓
+        const API_URL = 'https://micti-potato-disease-classification.hf.space'; 
         
         const formData = new FormData();
         formData.append('file', file);
 
         try {
-            // FIX: Use absolute URL from environment variable.
-            // On Vercel, relative paths ('/predict') fail because the frontend is static.
-            // Fallback to localhost for local development.
-            const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-
             const response = await axios.post(`${API_URL}/predict`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -69,7 +68,17 @@ const Scanner = () => {
             setResult(response.data);
         } catch (err) {
             console.error("Scan failed:", err);
-            setError('Failed to analyze image. Please try again.');
+            
+            let errorMessage = 'Failed to analyze image. Please try again.';
+            
+            // Check for connection errors
+            if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+                errorMessage = `Cannot connect to backend. Please check if the URL '${API_URL}' is correct.`;
+            } else if (err.response && err.response.status === 405) {
+                errorMessage = 'Method Not Allowed. Please check your API URL configuration.';
+            }
+
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
