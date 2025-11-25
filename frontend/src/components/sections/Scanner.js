@@ -317,7 +317,7 @@ export const Scanner = () => {
                                                             <p style={{ color: 'var(--color-text-muted)', marginBottom: '2rem', maxWidth: '400px' }}>
                                                                 {isHealthy 
                                                                     ? "No signs of disease detected. The plant appears healthy and vigorous." 
-                                                                    : "Immediate attention recommended. Toggle XAI view to see affected regions."}
+                                                                    : "Immediate attention recommended. Toggle heatmap to see affected regions."}
                                                             </p>
 
                                                             {/* Confidence Bar */}
