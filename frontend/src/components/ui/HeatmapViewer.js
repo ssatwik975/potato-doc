@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Activity } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 
 export const HeatmapViewer = ({ 
     originalUrl, 
@@ -10,7 +10,6 @@ export const HeatmapViewer = ({
     isScanning,
     isMobile 
 }) => {
-    // Determine which image to show
     const currentImageUrl = showHeatmap && heatmapData?.heatmapUrl 
         ? heatmapData.heatmapUrl 
         : originalUrl;
@@ -87,38 +86,6 @@ export const HeatmapViewer = ({
                     pointerEvents: 'none',
                 }} />
 
-                {/* XAI Badge */}
-                <AnimatePresence>
-                    {showHeatmap && heatmapData && (
-                        <motion.div 
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            style={{
-                                position: 'absolute',
-                                top: '10px',
-                                left: '10px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                                background: 'rgba(0,0,0,0.8)',
-                                backdropFilter: 'blur(10px)',
-                                padding: '5px 10px',
-                                borderRadius: '6px',
-                                fontSize: '0.65rem',
-                                fontWeight: 700,
-                                color: 'var(--color-primary)',
-                                letterSpacing: '0.08em',
-                                border: '1px solid rgba(0, 255, 157, 0.3)',
-                                textTransform: 'uppercase',
-                            }}
-                        >
-                            <Activity size={10} />
-                            Grad-CAM XAI
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
                 {/* Color Scale Legend */}
                 <AnimatePresence>
                     {showHeatmap && heatmapData && !isMobile && (
@@ -155,7 +122,7 @@ export const HeatmapViewer = ({
                 </AnimatePresence>
             </div>
 
-            {/* Toggle Button - Only show when heatmap is ready */}
+            {/* Toggle Button */}
             {heatmapData && !isScanning && (
                 <motion.button
                     initial={{ opacity: 0, y: 10 }}
@@ -183,7 +150,7 @@ export const HeatmapViewer = ({
                     whileTap={{ scale: 0.97 }}
                 >
                     {showHeatmap ? <EyeOff size={14} /> : <Eye size={14} />}
-                    {showHeatmap ? 'Show Original' : 'Show XAI Heatmap'}
+                    {showHeatmap ? 'Show Original' : 'Show Heatmap'}
                 </motion.button>
             )}
         </div>

@@ -1,6 +1,6 @@
 /**
- * Enhanced Grad-CAM Simulation v3
- * More accurate disease spot detection using advanced color clustering
+ * Enhanced Grad-CAM Simulation v4
+ * Full heatmap overlay with blue for healthy regions, red for diseased
  */
 
 export const generateSimulatedHeatmap = (imageFile, diagnosis) => {
@@ -13,7 +13,6 @@ export const generateSimulatedHeatmap = (imageFile, diagnosis) => {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     
-                    // Higher resolution for better accuracy
                     const maxSize = 600;
                     const scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
                     canvas.width = Math.floor(img.width * scale);
@@ -28,23 +27,19 @@ export const generateSimulatedHeatmap = (imageFile, diagnosis) => {
                     
                     const isHealthy = diagnosis.toLowerCase().includes('healthy');
                     
-                    // Step 1: Detect leaf region with improved accuracy
                     const leafMask = detectLeafRegionAdvanced(data, width, height);
                     
                     let heatmapValues;
                     if (isHealthy) {
                         heatmapValues = generateHealthyHeatmap(leafMask, width, height);
                     } else {
-                        // Step 2: Analyze healthy tissue first to find baseline
                         const healthyBaseline = analyzeHealthyTissue(data, leafMask, width, height);
                         
-                        // Step 3: Multi-method disease detection
                         const colorDeviation = detectColorDeviation(data, leafMask, width, height, healthyBaseline);
                         const spotDetection = detectDiseasedSpots(data, leafMask, width, height, diagnosis);
                         const contrastMap = detectLocalContrast(data, leafMask, width, height);
                         const clusterMap = detectDiseaseCluster(data, leafMask, width, height, healthyBaseline);
                         
-                        // Step 4: Weighted combination with emphasis on actual spots
                         heatmapValues = combineSignalsWeighted(
                             [colorDeviation, spotDetection, contrastMap, clusterMap],
                             [0.25, 0.35, 0.15, 0.25],
@@ -52,20 +47,15 @@ export const generateSimulatedHeatmap = (imageFile, diagnosis) => {
                             width, height
                         );
                         
-                        // Step 5: Refine by suppressing false positives
                         heatmapValues = suppressFalsePositives(heatmapValues, data, leafMask, width, height);
                     }
                     
-                    // Step 6: Multi-scale smoothing for natural CAM appearance
                     heatmapValues = multiScaleSmooth(heatmapValues, width, height);
-                    
-                    // Step 7: Normalize and enhance
                     heatmapValues = normalizeAndEnhance(heatmapValues, leafMask);
                     
-                    // Create overlay
-                    const heatmapCanvas = createHeatmapOverlay(img, heatmapValues, leafMask, width, height);
+                    // Create full overlay with blue for healthy regions
+                    const heatmapCanvas = createFullHeatmapOverlay(img, heatmapValues, leafMask, width, height);
                     
-                    // Calculate severity
                     const severity = calculateSeverity(heatmapValues, leafMask, isHealthy);
                     
                     resolve({
@@ -89,11 +79,102 @@ export const generateSimulatedHeatmap = (imageFile, diagnosis) => {
 };
 
 /**
+ * Create FULL heatmap overlay - Blue for healthy, Red for diseased
+ * Similar to medical imaging Grad-CAM visualizations
+ */
+const createFullHeatmapOverlay = (originalImg, heatmapData, leafMask, width, height) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(originalImg, 0, 0, width, height);
+    
+    const imageData = ctx.getImageData(0, 0, width, height);
+    const pixels = imageData.data;
+    
+    for (let i = 0; i < heatmapData.length; i++) {
+        const pixelIndex = i * 4;
+        
+        // Only apply heatmap on leaf region
+        if (leafMask[i] > 0.3) {
+            const activation = heatmapData[i];
+            
+            // Get jet/thermal colormap color (blue -> cyan -> green -> yellow -> red)
+            const color = valueToJetColor(activation);
+            
+            // Blend with original image
+            // Higher alpha for more visible heatmap
+            const alpha = 0.55; // Consistent overlay strength
+            
+            pixels[pixelIndex] = Math.round(pixels[pixelIndex] * (1 - alpha) + color.r * alpha);
+            pixels[pixelIndex + 1] = Math.round(pixels[pixelIndex + 1] * (1 - alpha) + color.g * alpha);
+            pixels[pixelIndex + 2] = Math.round(pixels[pixelIndex + 2] * (1 - alpha) + color.b * alpha);
+        } else {
+            // Darken background slightly for contrast
+            pixels[pixelIndex] = Math.round(pixels[pixelIndex] * 0.3);
+            pixels[pixelIndex + 1] = Math.round(pixels[pixelIndex + 1] * 0.3);
+            pixels[pixelIndex + 2] = Math.round(pixels[pixelIndex + 2] * 0.4);
+        }
+    }
+    
+    ctx.putImageData(imageData, 0, 0);
+    return canvas;
+};
+
+/**
+ * Jet/Thermal colormap - Blue (low) -> Cyan -> Green -> Yellow -> Red (high)
+ * This matches the medical imaging style heatmaps
+ */
+const valueToJetColor = (value) => {
+    const v = Math.max(0, Math.min(1, value));
+    
+    let r, g, b;
+    
+    if (v < 0.125) {
+        // Dark blue to blue
+        const t = v / 0.125;
+        r = 0;
+        g = 0;
+        b = 0.5 + t * 0.5;
+    } else if (v < 0.375) {
+        // Blue to cyan
+        const t = (v - 0.125) / 0.25;
+        r = 0;
+        g = t;
+        b = 1;
+    } else if (v < 0.625) {
+        // Cyan to green to yellow
+        const t = (v - 0.375) / 0.25;
+        r = t;
+        g = 1;
+        b = 1 - t;
+    } else if (v < 0.875) {
+        // Yellow to red
+        const t = (v - 0.625) / 0.25;
+        r = 1;
+        g = 1 - t;
+        b = 0;
+    } else {
+        // Red to dark red
+        const t = (v - 0.875) / 0.125;
+        r = 1 - t * 0.3;
+        g = 0;
+        b = 0;
+    }
+    
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+};
+
+/**
  * Advanced leaf detection using multiple color spaces
  */
 const detectLeafRegionAdvanced = (data, width, height) => {
     const mask = new Float32Array(width * height);
-    const scores = new Float32Array(width * height);
     
     for (let i = 0; i < data.length; i += 4) {
         const r = data[i], g = data[i + 1], b = data[i + 2];
@@ -104,48 +185,38 @@ const detectLeafRegionAdvanced = (data, width, height) => {
         
         let leafScore = 0;
         
-        // Green vegetation (healthy parts)
         if (hsv.h >= 40 && hsv.h <= 160) {
             leafScore += 0.4;
             if (hsv.s > 0.15) leafScore += 0.2;
             if (hsv.v > 0.15 && hsv.v < 0.95) leafScore += 0.2;
         }
         
-        // Brown/tan (diseased parts)
         if (hsv.h >= 5 && hsv.h <= 55 && hsv.s > 0.15) {
             leafScore += 0.5;
             if (hsv.v > 0.1 && hsv.v < 0.8) leafScore += 0.2;
         }
         
-        // Yellow-green transition
         if (hsv.h >= 50 && hsv.h <= 85 && hsv.s > 0.2) {
             leafScore += 0.4;
         }
         
-        // LAB-based: negative 'a' is green, positive 'a' is red/brown
         if (lab.a < 25 && lab.a > -50) {
             leafScore += 0.3;
         }
         
-        // Exclude very dark or very bright (background/overexposed)
         if (hsv.v < 0.08 || hsv.v > 0.97) {
             leafScore *= 0.1;
         }
         
-        // Exclude low saturation gray areas (background)
         if (hsv.s < 0.08 && (hsv.v < 0.3 || hsv.v > 0.7)) {
             leafScore *= 0.2;
         }
         
-        scores[pixelIndex] = Math.min(1, leafScore);
         mask[pixelIndex] = leafScore > 0.4 ? 1.0 : 0.0;
     }
     
-    // Clean up with morphological operations
     let cleaned = morphologicalOpen(mask, width, height, 2);
     cleaned = morphologicalClose(cleaned, width, height, 5);
-    
-    // Fill holes using connected component analysis
     cleaned = fillSmallHoles(cleaned, width, height, 100);
     
     return cleaned;
@@ -165,14 +236,12 @@ const analyzeHealthyTissue = (data, leafMask, width, height) => {
         const hsv = rgbToHsv(r, g, b);
         const lab = rgbToLab(r, g, b);
         
-        // Identify clearly healthy (green) pixels
         if (hsv.h >= 60 && hsv.h <= 150 && hsv.s >= 0.2 && hsv.v >= 0.2 && hsv.v <= 0.9) {
             greenPixels.push({ r, g, b, hsv, lab });
         }
     }
     
     if (greenPixels.length < 50) {
-        // Not enough healthy tissue, use defaults
         return {
             meanH: 100, meanS: 0.4, meanV: 0.5,
             stdH: 20, stdS: 0.15, stdV: 0.15,
@@ -181,7 +250,6 @@ const analyzeHealthyTissue = (data, leafMask, width, height) => {
         };
     }
     
-    // Calculate statistics
     let sumH = 0, sumS = 0, sumV = 0, sumL = 0, sumA = 0, sumB = 0;
     greenPixels.forEach(p => {
         sumH += p.hsv.h; sumS += p.hsv.s; sumV += p.hsv.v;
@@ -228,18 +296,14 @@ const detectColorDeviation = (data, leafMask, width, height, baseline) => {
         const hsv = rgbToHsv(r, g, b);
         const lab = rgbToLab(r, g, b);
         
-        // Calculate z-scores (how many std deviations from healthy mean)
         const zH = Math.abs(hsv.h - baseline.meanH) / baseline.stdH;
         const zS = Math.abs(hsv.s - baseline.meanS) / baseline.stdS;
         const zV = Math.abs(hsv.v - baseline.meanV) / baseline.stdV;
         const zA = Math.abs(lab.a - baseline.meanA) / baseline.stdA;
         const zB = Math.abs(lab.b - baseline.meanB) / baseline.stdB;
         
-        // Combine z-scores - higher = more abnormal
-        // Weight hue and LAB 'a' (green-red axis) more heavily
         const deviation = (zH * 0.25 + zS * 0.15 + zV * 0.15 + zA * 0.3 + zB * 0.15);
         
-        // Map to 0-1 range (z-score > 2 is significant)
         heatmap[pixelIndex] = Math.min(1, deviation / 3);
     }
     
@@ -267,61 +331,44 @@ const detectDiseasedSpots = (data, leafMask, width, height, diagnosis) => {
         let score = 0;
         
         if (isEarlyBlight) {
-            // Early blight: concentric brown/tan rings with dark centers
-            // Dark brown centers (low V, warm hue)
             if (hsv.h >= 10 && hsv.h <= 45 && hsv.v >= 0.1 && hsv.v <= 0.4) {
                 score += (0.45 - hsv.v) * 2;
             }
-            // Tan/brown rings
             if (hsv.h >= 20 && hsv.h <= 50 && hsv.s >= 0.25 && hsv.v >= 0.3 && hsv.v <= 0.65) {
                 score += 0.6;
             }
-            // Yellow chlorotic halo
             if (hsv.h >= 45 && hsv.h <= 65 && hsv.s >= 0.3 && hsv.v >= 0.5) {
                 score += 0.4;
             }
-            // LAB: positive 'a' (red/brown), positive 'b' (yellow)
             if (lab.a > 5 && lab.b > 20) {
                 score += 0.3;
             }
-            
         } else if (isLateBlight) {
-            // Late blight: water-soaked dark lesions, gray-brown, irregular
-            // Dark water-soaked areas
             if (hsv.v >= 0.08 && hsv.v <= 0.35) {
                 score += (0.4 - hsv.v) * 1.8;
             }
-            // Gray-brown with low saturation
             if (hsv.s >= 0.1 && hsv.s <= 0.4 && hsv.h >= 15 && hsv.h <= 60) {
                 score += 0.5;
             }
-            // Very dark necrotic tissue
             if (hsv.v < 0.2 && hsv.s < 0.3) {
                 score += 0.7;
             }
-            // Purplish-brown edges (sometimes in late blight)
             if (hsv.h >= 280 || hsv.h <= 20) {
                 score += 0.25;
             }
-            
         } else {
-            // Generic disease detection
-            // Brown spots
             if (hsv.h >= 10 && hsv.h <= 50 && hsv.s >= 0.2) {
                 score += 0.5;
                 if (hsv.v < 0.5) score += 0.3;
             }
-            // Dark spots
             if (hsv.v < 0.35 && hsv.v > 0.08) {
                 score += (0.4 - hsv.v) * 1.5;
             }
-            // Yellow/chlorotic
             if (hsv.h >= 45 && hsv.h <= 70 && hsv.s >= 0.3) {
                 score += 0.35;
             }
         }
         
-        // Boost for non-green on leaf (universal disease indicator)
         if ((hsv.h < 50 || hsv.h > 155) && leafMask[pixelIndex] > 0.5) {
             score += 0.2;
         }
@@ -333,18 +380,16 @@ const detectDiseasedSpots = (data, leafMask, width, height, diagnosis) => {
 };
 
 /**
- * Detect local contrast anomalies (lesions have different texture)
+ * Detect local contrast anomalies
  */
 const detectLocalContrast = (data, leafMask, width, height) => {
     const heatmap = new Float32Array(width * height);
     const gray = new Float32Array(width * height);
     
-    // Convert to grayscale
     for (let i = 0; i < data.length; i += 4) {
         gray[i / 4] = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114) / 255;
     }
     
-    // Calculate local standard deviation (texture measure)
     const windowSize = 7;
     const half = Math.floor(windowSize / 2);
     
@@ -374,8 +419,6 @@ const detectLocalContrast = (data, leafMask, width, height) => {
                 const mean = sum / count;
                 const variance = (sumSq / count) - (mean * mean);
                 const localContrast = maxVal - minVal;
-                
-                // High local contrast or variance indicates texture anomaly
                 heatmap[idx] = Math.min(1, (Math.sqrt(variance) * 8 + localContrast * 2) / 2);
             }
         }
@@ -385,26 +428,22 @@ const detectLocalContrast = (data, leafMask, width, height) => {
 };
 
 /**
- * Cluster-based detection: find regions that don't belong to healthy cluster
+ * Cluster-based detection
  */
 const detectDiseaseCluster = (data, leafMask, width, height, baseline) => {
     const heatmap = new Float32Array(width * height);
     
-    // Simple k-means-like: distance from healthy centroid
     for (let i = 0; i < data.length; i += 4) {
         const pixelIndex = i / 4;
         if (leafMask[pixelIndex] < 0.5) continue;
         
         const lab = rgbToLab(data[i], data[i + 1], data[i + 2]);
         
-        // Euclidean distance in LAB space from healthy centroid
-        const dL = (lab.l - baseline.meanL) / 50;  // Normalize
+        const dL = (lab.l - baseline.meanL) / 50;
         const dA = (lab.a - baseline.meanA) / 60;
         const dB = (lab.b - baseline.meanB) / 60;
         
         const distance = Math.sqrt(dL * dL + dA * dA + dB * dB);
-        
-        // Normalize to 0-1
         heatmap[pixelIndex] = Math.min(1, distance * 1.5);
     }
     
@@ -422,24 +461,17 @@ const combineSignalsWeighted = (signals, weights, leafMask, width, height) => {
         if (leafMask[i] < 0.5) continue;
         
         let sum = 0;
-        let validSignals = 0;
-        
         for (let j = 0; j < signals.length; j++) {
-            if (signals[j][i] > 0) {
-                sum += signals[j][i] * weights[j];
-                validSignals += weights[j];
-            }
+            sum += signals[j][i] * weights[j];
         }
-        
-        // Average weighted by active signals
-        combined[i] = validSignals > 0 ? sum / totalWeight : 0;
+        combined[i] = sum / totalWeight;
     }
     
     return combined;
 };
 
 /**
- * Suppress false positives (veins, edges, shadows)
+ * Suppress false positives
  */
 const suppressFalsePositives = (heatmap, data, leafMask, width, height) => {
     const result = new Float32Array(heatmap);
@@ -451,17 +483,14 @@ const suppressFalsePositives = (heatmap, data, leafMask, width, height) => {
         const r = data[i], g = data[i + 1], b = data[i + 2];
         const hsv = rgbToHsv(r, g, b);
         
-        // Suppress deep shadows (not disease, just dark)
         if (hsv.v < 0.12 && hsv.s < 0.15) {
             result[pixelIndex] *= 0.3;
         }
         
-        // Suppress very saturated pure greens (healthy veins)
         if (hsv.h >= 80 && hsv.h <= 140 && hsv.s > 0.5 && hsv.v > 0.3) {
             result[pixelIndex] *= 0.4;
         }
         
-        // Suppress specular highlights
         if (hsv.v > 0.92 && hsv.s < 0.2) {
             result[pixelIndex] *= 0.2;
         }
@@ -471,17 +500,15 @@ const suppressFalsePositives = (heatmap, data, leafMask, width, height) => {
 };
 
 /**
- * Multi-scale Gaussian smoothing for natural CAM look
+ * Multi-scale Gaussian smoothing
  */
 const multiScaleSmooth = (data, width, height) => {
-    // Apply at multiple scales and average
     const scale1 = gaussianBlur(data, width, height, 3);
     const scale2 = gaussianBlur(data, width, height, 8);
     const scale3 = gaussianBlur(data, width, height, 15);
     
     const result = new Float32Array(data.length);
     for (let i = 0; i < result.length; i++) {
-        // Weighted average: prefer medium scale
         result[i] = scale1[i] * 0.25 + scale2[i] * 0.5 + scale3[i] * 0.25;
     }
     
@@ -492,7 +519,6 @@ const multiScaleSmooth = (data, width, height) => {
  * Normalize and enhance contrast
  */
 const normalizeAndEnhance = (data, leafMask) => {
-    // Find min/max within leaf region
     let min = 1, max = 0;
     for (let i = 0; i < data.length; i++) {
         if (leafMask[i] > 0.5 && data[i] > 0.02) {
@@ -505,10 +531,8 @@ const normalizeAndEnhance = (data, leafMask) => {
     
     const result = new Float32Array(data.length);
     for (let i = 0; i < data.length; i++) {
-        if (data[i] > 0.02) {
-            // Normalize to 0-1
+        if (leafMask[i] > 0.5) {
             let val = (data[i] - min) / (max - min);
-            // Apply S-curve for better contrast
             val = 1 / (1 + Math.exp(-6 * (val - 0.5)));
             result[i] = val;
         }
@@ -518,74 +542,7 @@ const normalizeAndEnhance = (data, leafMask) => {
 };
 
 /**
- * Create heatmap overlay with Turbo colormap
- */
-const createHeatmapOverlay = (originalImg, heatmapData, leafMask, width, height) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = width;
-    canvas.height = height;
-    ctx.drawImage(originalImg, 0, 0, width, height);
-    
-    const overlayData = ctx.getImageData(0, 0, width, height);
-    const overlay = overlayData.data;
-    
-    for (let i = 0; i < heatmapData.length; i++) {
-        const activation = heatmapData[i];
-        
-        // Only overlay significant activations on leaf
-        if (activation > 0.12 && leafMask[i] > 0.3) {
-            const pixelIndex = i * 4;
-            const color = valueToTurboColor(activation);
-            
-            // Smooth alpha based on activation strength
-            const alpha = Math.min(0.72, activation * 0.8);
-            
-            overlay[pixelIndex] = Math.round(overlay[pixelIndex] * (1 - alpha) + color.r * alpha);
-            overlay[pixelIndex + 1] = Math.round(overlay[pixelIndex + 1] * (1 - alpha) + color.g * alpha);
-            overlay[pixelIndex + 2] = Math.round(overlay[pixelIndex + 2] * (1 - alpha) + color.b * alpha);
-        }
-    }
-    
-    ctx.putImageData(overlayData, 0, 0);
-    return canvas;
-};
-
-/**
- * Turbo colormap
- */
-const valueToTurboColor = (value) => {
-    const v = Math.max(0, Math.min(1, value));
-    let r, g, b;
-    
-    if (v < 0.25) {
-        const t = v / 0.25;
-        r = 0.18995 + t * (0.07176 - 0.18995);
-        g = 0.07176 + t * (0.42107 - 0.07176);
-        b = 0.23217 + t * (0.69520 - 0.23217);
-    } else if (v < 0.5) {
-        const t = (v - 0.25) / 0.25;
-        r = 0.07176 + t * (0.32941 - 0.07176);
-        g = 0.42107 + t * (0.86737 - 0.42107);
-        b = 0.69520 + t * (0.32941 - 0.69520);
-    } else if (v < 0.75) {
-        const t = (v - 0.5) / 0.25;
-        r = 0.32941 + t * (0.90588 - 0.32941);
-        g = 0.86737 + t * (0.76078 - 0.86737);
-        b = 0.32941 + t * (0.04314 - 0.32941);
-    } else {
-        const t = (v - 0.75) / 0.25;
-        r = 0.90588 + t * (0.47059 - 0.90588);
-        g = 0.76078 + t * (0.01176 - 0.76078);
-        b = 0.04314 + t * (0.05098 - 0.04314);
-    }
-    
-    return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
-};
-
-/**
- * Calculate severity with improved accuracy
+ * Calculate severity
  */
 const calculateSeverity = (heatmapData, leafMask, isHealthy) => {
     if (isHealthy) return 0.02 + Math.random() * 0.03;
@@ -601,7 +558,6 @@ const calculateSeverity = (heatmapData, leafMask, isHealthy) => {
     
     activations.sort((a, b) => a - b);
     
-    // Multiple severity metrics
     const lowThreshold = 0.25;
     const midThreshold = 0.45;
     const highThreshold = 0.65;
@@ -618,13 +574,11 @@ const calculateSeverity = (heatmapData, leafMask, isHealthy) => {
     const midPercent = midCount / n;
     const highPercent = highCount / n;
     
-    // Top 5% mean
     const top5Index = Math.floor(n * 0.95);
     let top5Sum = 0;
     for (let i = top5Index; i < n; i++) top5Sum += activations[i];
     const top5Mean = top5Sum / (n - top5Index) || 0;
     
-    // Combine
     const severity = (
         lowPercent * 0.15 +
         midPercent * 0.25 +
@@ -675,7 +629,6 @@ const gaussianBlur = (data, width, height, radius) => {
     const temp = new Float32Array(data.length);
     const result = new Float32Array(data.length);
     
-    // Horizontal
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
             let sum = 0, wSum = 0;
@@ -690,7 +643,6 @@ const gaussianBlur = (data, width, height, radius) => {
         }
     }
     
-    // Vertical
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
             let sum = 0, wSum = 0;
@@ -763,23 +715,16 @@ const erode = (mask, width, height, radius) => {
     return result;
 };
 
-const fillSmallHoles = (mask, width, height, minSize) => {
-    // Simple hole filling - invert, remove small components, invert back
-    const inverted = new Float32Array(mask.length);
-    for (let i = 0; i < mask.length; i++) {
-        inverted[i] = mask[i] > 0.5 ? 0 : 1;
-    }
-    
-    // For simplicity, just do morphological close
-    const closed = morphologicalClose(mask, width, height, 3);
-    return closed;
+const fillSmallHoles = (mask, width, height) => {
+    return morphologicalClose(mask, width, height, 3);
 };
 
 const generateHealthyHeatmap = (leafMask, width, height) => {
     const heatmap = new Float32Array(width * height);
     for (let i = 0; i < heatmap.length; i++) {
         if (leafMask[i] > 0.5) {
-            heatmap[i] = 0.01 + Math.random() * 0.02;
+            // Low values = blue in jet colormap
+            heatmap[i] = 0.05 + Math.random() * 0.1;
         }
     }
     return heatmap;
