@@ -1,8 +1,5 @@
-tensorflow
 fastapi
 uvicorn
 python-multipart
-pillow
-tensorflow-serving-api==2.18.0
-matplotlib
-numpy
+google-generativeai
+python-dotenv
