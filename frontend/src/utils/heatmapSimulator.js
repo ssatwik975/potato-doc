@@ -127,7 +127,7 @@ const createFullHeatmapOverlay = (originalImg, heatmapData, leafMask, width, hei
  * This matches the medical imaging style heatmaps
  */
 const valueToJetColor = (value) => {
-    const v = Math.max(0, Math.min(1, value));
+    const v = Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
     
     let r, g, b;
     
@@ -417,7 +417,7 @@ const detectLocalContrast = (data, leafMask, width, height) => {
             
             if (count > windowSize) {
                 const mean = sum / count;
-                const variance = (sumSq / count) - (mean * mean);
+                const variance = Math.max(0, (sumSq / count) - (mean * mean));
                 const localContrast = maxVal - minVal;
                 heatmap[idx] = Math.min(1, (Math.sqrt(variance) * 8 + localContrast * 2) / 2);
             }
