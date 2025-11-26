@@ -148,7 +148,6 @@ The project is architected as a modern, cloud-native application:
 
 *   **Mobile Native:** Developing a React Native application for offline-first field usage in remote areas.
 *   **IoT Integration:** Connecting the SaaS backend to Raspberry Pi-based soil moisture sensors for multi-modal prediction (Image + Soil Data).
-*   **Monetization:** Implementing Stripe API for premium tier subscriptions (SaaS business model).
 
 ---
 
