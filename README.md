@@ -1,19 +1,16 @@
-# Potato Doc – AgroSaaS Platform for Precision Agriculture
+# Potato Doc – Accessible Precision Agriculture for Everyone
 
 <p align="center">
   <img src="public/hero.jpeg" alt="Potato Doc Hero Section" width="100%">
 </p>
 
-<p align="center">
+<p align="">
   <strong>An Explainable AI (XAI) and GenAI-Powered Platform for Quantitative Plant Disease Diagnosis and Automated Severity Estimation.</strong>
 </p>
 
-<p align="center">
+<p align="">
   A Major Project Report submitted in partial fulfillment of the requirements for the degree of Bachelor of Technology
-  <br>
-  by
-  <br>
-  <strong>Satwik Singh (22U03036)</strong> and <strong>Arpit Raj (22U03034)</strong>
+  by <strong>Satwik Singh (22U03036)</strong> and <strong>Arpit Raj (22U03034)</strong>
 </p>
 
 ---
