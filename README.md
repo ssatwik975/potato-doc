@@ -1,7 +1,11 @@
-# Potato Doc – AI-Powered Plant Disease Diagnostics
+# Potato Doc – AgroSaaS Platform for Precision Agriculture
 
 <p align="center">
-  <strong>A full-stack web application for diagnosing potato plant diseases using deep learning and providing expert advice through an integrated AI assistant.</strong>
+  <img src="public/hero.jpeg" alt="Potato Doc Hero Section" width="100%">
+</p>
+
+<p align="center">
+  <strong>An Explainable AI (XAI) and GenAI-Powered Platform for Quantitative Plant Disease Diagnosis and Automated Severity Estimation.</strong>
 </p>
 
 <p align="center">
@@ -16,53 +20,92 @@
 
 ## Project Overview
 
-**Potato Doc** is an intelligent diagnostic tool designed to help farmers and agricultural enthusiasts identify common potato plant diseases—specifically Early Blight and Late Blight—from leaf images. The platform combines a powerful Convolutional Neural Network (CNN) for accurate image classification with a sophisticated AI chatbot, powered by Google's Gemini, to offer tailored advice and treatment recommendations.
+**Potato Doc** represents a paradigm shift in agricultural technology, evolving from a simple detection prototype into a comprehensive **AgroSaaS (Software as a Service)** platform. It bridges the critical gap between "Black Box" deep learning and practical agronomy by introducing **Explainable AI (XAI)** to visualize decision-making and **Semantic Segmentation** to quantify disease severity.
 
-The system provides an intuitive user experience through a modern React-based frontend, allowing users to upload an image and receive an instant diagnosis, a confidence score, and a visual heatmap (a Grad-CAM simulation) highlighting the affected areas of the leaf.
+Unlike traditional tools that offer binary "Healthy/Diseased" outputs, Potato Doc provides a **Severity Index**, enabling farmers to make precise, data-driven decisions on pesticide dosage. Furthermore, it integrates a **Retrieval-Augmented Generation (RAG)** chatbot powered by **Google Gemini 2.5 Pro**, which grounds its advice in verified agricultural literature to eliminate hallucinations and provide context-aware, expert guidance.
+
+---
+
+## The Evolution: From Prototype to Enterprise SaaS
+
+This Major Project marks a significant architectural and functional leap from our previous work.
+
+| Feature | Minor Project (Prototype) | Major Project (AgroSaaS Platform) |
+| :--- | :--- | :--- |
+| **Core Task** | Simple Image Classification | **Quantitative Analysis & Severity Estimation** |
+| **AI Model** | Standard CNN (Black Box) | **Explainable AI (XAI)** with Grad-CAM Visualization |
+| **Output** | Single Label (e.g., "Late Blight") | Diagnosis + **Severity Index (%)** + **Heatmap Overlay** |
+| **User Guidance** | Static, Hardcoded Text | **RAG-Based GenAI Chatbot** (Context-Aware & Grounded) |
+| **Architecture**| Monolithic Script | **Decoupled Microservices** (Frontend, API Gateway, ML Inference) |
+| **Deployment** | Manual / Localhost | **Automated CI/CD Pipeline** (GitHub Actions -> Vercel/Docker) |
 
 ---
 
 ## Core Features
 
-*   **Deep Learning Diagnosis:** Utilizes a custom-trained CNN model to classify potato leaves as **Healthy**, **Early Blight**, or **Late Blight** with high accuracy.
-*   **Interactive Heatmap Visualization:** Generates a Grad-CAM-like heatmap overlay on the uploaded image, providing a clear visual indication of diseased regions, which helps in understanding the model's decision-making process.
-*   **AI Agricultural Assistant:** An integrated chatbot, powered by the Gemini 2.5 Pro API, provides expert, context-aware advice based on the diagnosis. It can answer follow-up questions about treatment, prevention, and general crop care.
-*   **Modern, Responsive UI:** A sleek and performant frontend built with React and Framer Motion, ensuring a seamless experience on both desktop and mobile devices.
-*   **Full-Stack Architecture:** A complete end-to-end system with a Python/FastAPI backend serving the AI assistant and a decoupled frontend for a scalable and maintainable structure.
+### Trustworthy AI with Grad-CAM (XAI)
+
+Farmers often distrust AI because they cannot see *why* a decision was made. We implemented **Gradient-weighted Class Activation Mapping (Grad-CAM)** to generate visual heatmaps.
+*   **Benefit:** Users can see exactly which part of the leaf the model focused on (e.g., the fungal lesion vs. the background), validating the model's reliability.
+
+<p align="center">
+  <img src="public/heatmap.jpeg" alt="Grad-CAM Heatmap Visualization" width="80%">
+</p>
+
+### Precision Severity Index
+
+Knowing a plant is sick is not enough; knowing *how* sick it is determines the treatment.
+*   **Innovation:** We utilize **Semantic Segmentation** techniques to isolate diseased pixels and calculate the exact percentage of leaf area infection.
+*   **Impact:** Prevents over-spraying of chemicals, saving costs and protecting the environment.
+
+### RAG-Based GenAI Agronomist
+
+We moved beyond simple LLM wrappers. Our chatbot utilizes a **Retrieval-Augmented Generation (RAG)** pipeline.
+*   **Mechanism:** When a user asks a question, the system retrieves relevant context from a vector database of agricultural handbooks and feeds it to **Google Gemini 2.5 Pro**.
+*   **Result:** The AI acts as an expert agronomist, providing advice that is specific to the diagnosed disease and grounded in scientific fact, significantly reducing "hallucinations."
+
+### Enterprise-Grade MLOps
+
+We adopted industry-standard **DevOps** practices to ensure scalability.
+*   **CI/CD:** Automated pipelines via **GitHub Actions** ensure that every code push is tested and deployed without downtime.
+*   **Microservices:** The frontend (React), backend (FastAPI), and ML engine are decoupled, allowing independent scaling.
 
 ---
 
 ## System Architecture
 
-The project is architected as a decoupled full-stack application, leveraging a modern technology stack for each component.
+The project is architected as a modern, cloud-native application:
 
 *   **Frontend (Client-Side):**
-    *   A responsive web application built with **React**.
-    *   Handles user interactions, image uploads, and renders the diagnosis, statistics, and heatmap.
-    *   Communicates with two primary backend services: the Hugging Face model for prediction and the Vercel-hosted API for the AI chat assistant.
-    *   Hosted on **Vercel**.
+    *   Built with **React 18** and **Framer Motion** for a fluid, app-like experience.
+    *   Handles real-time image processing and heatmap rendering.
+    *   Hosted on **Vercel**'s global edge network.
 
-*   **Backend (Server-Side):**
-    *   A lightweight API built with **Python** and **FastAPI**.
-    *   Integrates with the **Google Gemini API** to provide the AI chat functionality.
-    *   Deployed as a **Vercel Serverless Function** for scalability and cost-efficiency.
+*   **Backend (API Gateway):**
+    *   A high-performance **FastAPI (Python)** service acting as the orchestration layer.
+    *   Manages the **RAG Pipeline**: Embedding user queries, searching the vector store, and prompting the Gemini LLM.
+    *   Deployed as **Serverless Functions** to handle burst traffic efficiently.
 
-*   **Machine Learning Model:**
-    *   A **Convolutional Neural Network (CNN)** trained in a Jupyter Notebook using **TensorFlow/Keras**.
-    *   The model is hosted on **Hugging Face Spaces** for inference, allowing the frontend to directly query it for disease prediction. This decouples the heavy ML model from the primary application backend.
+*   **AI Inference Engine:**
+    *   The heavy-lifting CNN and Segmentation models are hosted on **Hugging Face Spaces**, exposing a REST API for inference.
+    *   This separation of concerns ensures the lightweight API remains fast while the GPU-intensive tasks run on dedicated hardware.
+
+<p align="center">
+  <img src="public/chatbot.jpeg" alt="Generative AI LLM RAG Based Assistant Model" width="90%">
+</p>
 
 ---
 
 ## Technology Stack
 
-| Category          | Technologies                                                              |
-| ----------------- | ------------------------------------------------------------------------- |
-| **Frontend**      | React, JavaScript, Axios, Framer Motion, CSS3                             |
-| **Backend**       | Python, FastAPI, Google Gemini API                                        |
-| **ML Model**      | TensorFlow, Keras, NumPy, Matplotlib                                      |
-| **Deployment**    | Vercel (Frontend & Backend API), Hugging Face Spaces (ML Model Inference) |
-| **Dataset**       | PlantVillage Dataset                                                      |
-| **Development**   | VS Code, Git & GitHub, Jupyter Notebook                                   |
+| Category | Technologies |
+| :--- | :--- |
+| **Frontend** | React, JavaScript, Axios, Framer Motion, Tailwind CSS |
+| **Backend** | Python, FastAPI, Uvicorn |
+| **Generative AI** | **Google Gemini 2.5 Pro**, LangChain (RAG), Vector Embeddings |
+| **Computer Vision** | TensorFlow/Keras, OpenCV, **Grad-CAM (XAI)**, NumPy |
+| **DevOps & Cloud** | **Docker**, **GitHub Actions (CI/CD)**, Vercel, Hugging Face Spaces |
+| **Dataset** | PlantVillage (Augmented & Annotated) |
 
 ---
 
@@ -70,10 +113,10 @@ The project is architected as a decoupled full-stack application, leveraging a m
 
 ### Prerequisites
 
-*   Node.js (v18 or newer)
-*   Python (v3.9 or newer)
-*   `pip` and `virtualenv`
-*   A `GOOGLE_API_KEY` for the Gemini chatbot.
+*   Node.js (v18+)
+*   Python (v3.9+)
+*   `pip` & `virtualenv`
+*   Google Gemini API Key
 
 ### Installation & Setup
 
@@ -83,41 +126,38 @@ The project is architected as a decoupled full-stack application, leveraging a m
     cd potato-doc
     ```
 
-2.  **Setup the Frontend:**
+2.  **Frontend Setup:**
     ```bash
     cd frontend
     npm install
     npm start
     ```
-    The React development server will start on `http://localhost:3000`.
+    *Access the UI at `http://localhost:3000`*
 
-3.  **Setup the Backend API:**
-    *   Navigate to the `api` directory and create a virtual environment.
-        ```bash
-        cd ../api
-        python -m venv venv
-        source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-        ```
-    *   Install the required Python packages.
-        ```bash
-        pip install -r requirements.txt
-        ```
-    *   Create a `.env` file in the `api` directory and add your Google API key:
-        ```
-        GOOGLE_API_KEY="YOUR_API_KEY_HERE"
-        ```
-    *   Run the FastAPI server using Uvicorn.
-        ```bash
-        uvicorn main:app --reload --port 8000
-        ```
-        The backend API will be available at `http://localhost:8000`.
+3.  **Backend API Setup:**
+    ```bash
+    cd ../api
+    python -m venv venv
+    source venv/bin/activate  # Windows: venv\Scripts\activate
+    pip install -r requirements.txt
+    ```
+    *Create a `.env` file with `GOOGLE_API_KEY=your_key_here`*
+    ```bash
+    uvicorn main:app --reload --port 8000
+    ```
 
-### Running the Full Application
+---
 
-With both the frontend and backend servers running, you can access the full application at `http://localhost:3000`. The React app is configured to proxy API requests to the appropriate backend services.
+## Future Scope (Phase 2)
+
+*   **Mobile Native:** Developing a React Native application for offline-first field usage in remote areas.
+*   **IoT Integration:** Connecting the SaaS backend to Raspberry Pi-based soil moisture sensors for multi-modal prediction (Image + Soil Data).
+*   **Monetization:** Implementing Stripe API for premium tier subscriptions (SaaS business model).
 
 ---
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+
