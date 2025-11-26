@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff } from 'lucide-react';
+import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 export const HeatmapViewer = ({ 
     originalUrl, 
@@ -10,10 +11,6 @@ export const HeatmapViewer = ({
     isScanning,
     isMobile 
 }) => {
-    const currentImageUrl = showHeatmap && heatmapData?.heatmapUrl 
-        ? heatmapData.heatmapUrl 
-        : originalUrl;
-
     return (
         <div style={{
             display: 'flex',
@@ -37,24 +34,24 @@ export const HeatmapViewer = ({
                 transition: 'all 0.5s ease',
                 background: '#000',
             }}>
-                {/* Image with Animation */}
-                <AnimatePresence mode="wait">
-                    <motion.img 
-                        key={showHeatmap ? 'heatmap' : 'original'}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        src={currentImageUrl} 
-                        alt={showHeatmap ? "Grad-CAM Heatmap" : "Original Image"} 
+                {showHeatmap && heatmapData ? (
+                    <ReactCompareSlider
+                        itemOne={<ReactCompareSliderImage src={originalUrl} alt="Original Image" />}
+                        itemTwo={<ReactCompareSliderImage src={heatmapData.heatmapUrl} alt="Heatmap Analysis" />}
+                        style={{ width: '100%', height: '100%' }}
+                    />
+                ) : (
+                    <img 
+                        src={originalUrl} 
+                        alt="Original" 
                         style={{ 
                             width: '100%', 
                             height: '100%', 
-                            objectFit: 'cover',
-                            display: 'block',
+                            objectFit: 'cover', 
+                            display: 'block'
                         }} 
                     />
-                </AnimatePresence>
+                )}
 
                 {/* Scanning Line Animation */}
                 {isScanning && (
@@ -84,6 +81,7 @@ export const HeatmapViewer = ({
                     `,
                     backgroundSize: '25px 25px',
                     pointerEvents: 'none',
+                    zIndex: 5
                 }} />
 
                 {/* Color Scale Legend */}
@@ -107,6 +105,7 @@ export const HeatmapViewer = ({
                                 padding: '8px 6px',
                                 borderRadius: '6px',
                                 border: '1px solid rgba(255,255,255,0.1)',
+                                zIndex: 25
                             }}
                         >
                             <span style={{ fontSize: '0.55rem', color: '#ff4444', fontWeight: 700 }}>HIGH</span>
@@ -150,7 +149,7 @@ export const HeatmapViewer = ({
                     whileTap={{ scale: 0.97 }}
                 >
                     {showHeatmap ? <EyeOff size={14} /> : <Eye size={14} />}
-                    {showHeatmap ? 'Show Original' : 'Show Heatmap'}
+                    {showHeatmap ? 'Hide Heatmap' : 'Show Heatmap'}
                 </motion.button>
             )}
         </div>

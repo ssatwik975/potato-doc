@@ -5,11 +5,15 @@
   "outputDirectory": "frontend/build",
   "installCommand": "echo 'Skipping root install'",
   "functions": {
-    "api/**/*.js": {
+    "api/**/*.py": {
       "maxDuration": 10
     }
   },
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"

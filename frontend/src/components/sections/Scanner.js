@@ -58,6 +58,7 @@ export const Scanner = () => {
             const diagnosis = response.data.class || response.data.label || response.data.prediction || 'Unknown';
             const heatmap = await generateSimulatedHeatmap(imageFile, diagnosis);
             setHeatmapData(heatmap);
+            setShowHeatmap(true);
 
         } catch (error) {
             console.error("Scan failed:", error);
@@ -324,7 +325,7 @@ export const Scanner = () => {
                                                             <div style={{ marginBottom: isHealthy ? '2.5rem' : '1.5rem', width: '100%', maxWidth: '400px' }}>
                                                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
                                                                     <span style={{ color: 'var(--color-text-muted)' }}>AI Confidence Score</span>
-                                                                    <span style={{ color: color, fontWeight: 600 }}>{(confidence * 100).toFixed(1)}%</span>
+                                                                    <span style={{ color: color, fontWeight: 600 }}>{(Math.floor(confidence * 1000) / 10).toFixed(1)}%</span>
                                                                 </div>
                                                                 <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}>
                                                                     <motion.div 

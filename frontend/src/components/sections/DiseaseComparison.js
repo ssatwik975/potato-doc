@@ -27,10 +27,15 @@ const ClassCard = ({ title, subtitle, icon: Icon, color, delay }) => {
         }}
     >
         <div style={{ 
-            padding: '12px', 
+            width: '48px',
+            height: '48px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             borderRadius: '50%', 
             background: `${color}15`,
-            color: color 
+            color: color,
+            flexShrink: 0
         }}>
             <Icon size={24} />
         </div>
