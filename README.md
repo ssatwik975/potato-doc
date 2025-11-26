@@ -26,7 +26,7 @@ Unlike traditional tools that offer binary "Healthy/Diseased" outputs, Potato Do
 
 This Major Project marks a significant architectural and functional leap from our previous work.
 
-| Feature | Minor Project (Prototype) | Major Project (AgroSaaS Platform) |
+| Feature | Minor Project (Prototype) | Major Project (Full v1.0 Platform) |
 | :--- | :--- | :--- |
 | **Core Task** | Simple Image Classification | **Quantitative Analysis & Severity Estimation** |
 | **AI Model** | Standard CNN (Black Box) | **Explainable AI (XAI)** with Grad-CAM Visualization |
