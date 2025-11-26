@@ -98,7 +98,6 @@ The project is architected as a modern, cloud-native application:
 | :--- | :--- |
 | **Frontend** | React, JavaScript, Axios, Framer Motion, Tailwind CSS |
 | **Backend** | Python, FastAPI, Uvicorn |
-| **Generative AI** | **Google Gemini 2.5 Pro**, LangChain (RAG), Vector Embeddings |
 | **Computer Vision** | TensorFlow/Keras, OpenCV, **Grad-CAM (XAI)**, NumPy |
 | **DevOps & Cloud** | **Docker**, **GitHub Actions (CI/CD)**, Vercel, Hugging Face Spaces |
 | **Dataset** | PlantVillage (Augmented & Annotated) |
@@ -156,9 +155,6 @@ To ensure reliability and rapid iteration, we have implemented a robust **Contin
     python -m venv venv
     source venv/bin/activate  # Windows: venv\Scripts\activate
     pip install -r requirements.txt
-    ```
-    *Create a `.env` file with `GOOGLE_API_KEY=your_key_here`*
-    ```bash
     uvicorn main:app --reload --port 8000
     ```
 
