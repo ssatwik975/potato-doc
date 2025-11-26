@@ -1,5 +1,5 @@
 # Ignore heavy files and folders for Vercel deployment
-requirements.txt
+/requirements.txt
 models/
 PlantVillage/
 venv/
