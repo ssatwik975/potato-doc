@@ -6,7 +6,8 @@
   "installCommand": "echo 'Skipping root install'",
   "functions": {
     "api/**/*.py": {
-      "maxDuration": 10
+      "maxDuration": 10,
+      "includeFiles": "api/**"
     }
   },
   "rewrites": [
