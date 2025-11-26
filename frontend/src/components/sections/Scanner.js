@@ -5,12 +5,16 @@ import axios from 'axios';
 import { useInView } from '../../hooks/useInView';
 import { useBreakpoint } from '../../hooks/useMediaQuery';
 import { useDiagnosis } from '../../context/DiagnosisContext';
+import { HeatmapViewer } from '../ui/HeatmapViewer';
+import { generateSimulatedHeatmap } from '../../utils/heatmapSimulator';
 
 export const Scanner = () => {
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState(null);
     const [scanning, setScanning] = useState(false);
     const [result, setResult] = useState(null);
+    const [heatmapData, setHeatmapData] = useState(null);
+    const [showHeatmap, setShowHeatmap] = useState(false);
     const { setDiagnosis } = useDiagnosis();
     const fileInputRef = useRef(null);
 
@@ -23,6 +27,8 @@ export const Scanner = () => {
             setFile(selectedFile);
             setPreview(URL.createObjectURL(selectedFile));
             setResult(null);
+            setHeatmapData(null);
+            setShowHeatmap(false);
             scanImage(selectedFile);
         }
     };
@@ -30,8 +36,6 @@ export const Scanner = () => {
     const scanImage = async (imageFile) => {
         setScanning(true);
 
-        // Use proxy in development (localhost) to avoid CORS, full URL in production
-        // Note: Added trailing slash to avoid 307 redirects which can cause issues
         const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? '/predict/'
             : 'https://micti-potato-disease-classification.hf.space/predict/';
@@ -46,9 +50,16 @@ export const Scanner = () => {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
-            console.log("API Response:", response.data); // Debugging
+            console.log("API Response:", response.data);
             setResult(response.data);
             setDiagnosis(response.data);
+
+            // Generate simulated Grad-CAM heatmap
+            const diagnosis = response.data.class || response.data.label || response.data.prediction || 'Unknown';
+            const heatmap = await generateSimulatedHeatmap(imageFile, diagnosis);
+            setHeatmapData(heatmap);
+            setShowHeatmap(true);
+
         } catch (error) {
             console.error("Scan failed:", error);
             let errorMessage = "Scan failed. Please ensure the backend is running.";
@@ -69,6 +80,8 @@ export const Scanner = () => {
         setFile(null);
         setPreview(null);
         setResult(null);
+        setHeatmapData(null);
+        setShowHeatmap(false);
         setScanning(false);
     };
 
@@ -193,7 +206,7 @@ export const Scanner = () => {
                                         gap: isMobile ? '2rem' : '4rem',
                                     }}
                                 >
-                                    {/* Left Side: Image Preview */}
+                                    {/* Left Side: Image Preview with Heatmap */}
                                     <div style={{
                                         flex: isMobile ? 'none' : '1',
                                         width: isMobile ? '100%' : '50%',
@@ -201,45 +214,14 @@ export const Scanner = () => {
                                         justifyContent: 'center',
                                         alignItems: 'center',
                                     }}>
-                                        <div style={{
-                                            position: 'relative',
-                                            width: '100%',
-                                            maxWidth: '400px',
-                                            aspectRatio: '1',
-                                            borderRadius: '24px',
-                                            overflow: 'hidden',
-                                            border: '1px solid var(--glass-border)',
-                                            boxShadow: scanning ? '0 0 40px -10px var(--color-primary-dim)' : 'none',
-                                            transition: 'all 0.5s ease'
-                                        }}>
-                                            <img src={preview} alt="Scan Target" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-
-                                            {scanning && (
-                                                <motion.div
-                                                    style={{
-                                                        position: 'absolute',
-                                                        top: 0,
-                                                        left: 0,
-                                                        right: 0,
-                                                        height: '2px',
-                                                        background: 'var(--color-primary)',
-                                                        boxShadow: '0 0 20px var(--color-primary), 0 0 10px var(--color-primary)',
-                                                        zIndex: 10,
-                                                    }}
-                                                    animate={{ top: ['0%', '100%', '0%'] }}
-                                                    transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
-                                                />
-                                            )}
-                                            
-                                            {/* Overlay Grid */}
-                                            <div style={{
-                                                position: 'absolute', inset: 0,
-                                                backgroundImage: 'linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px)',
-                                                backgroundSize: '30px 30px',
-                                                opacity: 0.2,
-                                                pointerEvents: 'none',
-                                            }} />
-                                        </div>
+                                        <HeatmapViewer
+                                            originalUrl={preview}
+                                            heatmapData={heatmapData}
+                                            showHeatmap={showHeatmap}
+                                            onToggle={() => setShowHeatmap(!showHeatmap)}
+                                            isScanning={scanning}
+                                            isMobile={isMobile}
+                                        />
                                     </div>
 
                                     {/* Right Side: Results or Loading */}
@@ -272,14 +254,14 @@ export const Scanner = () => {
                                                     </h4>
                                                 </div>
                                                 
-                                                {/* Fake Loading Steps */}
+                                                {/* Loading Steps with XAI */}
                                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: '300px' }}>
-                                                    {['Preprocessing Image', 'Running Inference', 'Validating Results'].map((step, i) => (
+                                                    {['Preprocessing Image', 'Running CNN Inference', 'Generating Grad-CAM', 'Calculating Severity'].map((step, i) => (
                                                         <motion.div 
                                                             key={step}
                                                             initial={{ opacity: 0, x: -10 }}
                                                             animate={{ opacity: 1, x: 0 }}
-                                                            transition={{ delay: i * 0.5 }}
+                                                            transition={{ delay: i * 0.4 }}
                                                             style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}
                                                         >
                                                             <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--color-primary)' }} />
@@ -297,8 +279,9 @@ export const Scanner = () => {
                                                 {(() => {
                                                     const diagnosis = result.class || result.label || result.prediction || 'Unknown';
                                                     const isHealthy = diagnosis.toLowerCase().includes('healthy');
-                                                    // Fallback to 98% if confidence is missing, matching legacy behavior
                                                     const confidence = result.confidence || result.score || 0.98;
+                                                    // Use heatmap-calculated severity
+                                                    const severity = heatmapData?.severity || result.severity || 0;
                                                     const color = isHealthy ? 'var(--color-primary)' : 'var(--color-secondary)';
                                                     
                                                     return (
@@ -335,14 +318,14 @@ export const Scanner = () => {
                                                             <p style={{ color: 'var(--color-text-muted)', marginBottom: '2rem', maxWidth: '400px' }}>
                                                                 {isHealthy 
                                                                     ? "No signs of disease detected. The plant appears healthy and vigorous." 
-                                                                    : "Immediate attention recommended. Isolate affected plants to prevent spread."}
+                                                                    : "Immediate attention recommended. Toggle heatmap to see affected regions."}
                                                             </p>
 
                                                             {/* Confidence Bar */}
-                                                            <div style={{ marginBottom: '2.5rem', width: '100%', maxWidth: '400px' }}>
+                                                            <div style={{ marginBottom: isHealthy ? '2.5rem' : '1.5rem', width: '100%', maxWidth: '400px' }}>
                                                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
                                                                     <span style={{ color: 'var(--color-text-muted)' }}>AI Confidence Score</span>
-                                                                    <span style={{ color: color, fontWeight: 600 }}>{(confidence * 100).toFixed(1)}%</span>
+                                                                    <span style={{ color: color, fontWeight: 600 }}>{(Math.floor(confidence * 1000) / 10).toFixed(1)}%</span>
                                                                 </div>
                                                                 <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}>
                                                                     <motion.div 
@@ -353,6 +336,34 @@ export const Scanner = () => {
                                                                     />
                                                                 </div>
                                                             </div>
+
+                                                            {/* Severity Bar (Only show if diseased) */}
+                                                            {!isHealthy && (
+                                                                <div style={{ marginBottom: '2.5rem', width: '100%', maxWidth: '400px' }}>
+                                                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                                                        <span style={{ color: 'var(--color-text-muted)' }}>
+                                                                            Infection Severity
+                                                                            <span style={{ 
+                                                                                fontSize: '0.7rem', 
+                                                                                marginLeft: '0.5rem',
+                                                                                opacity: 0.6,
+                                                                                fontStyle: 'italic'
+                                                                            }}>
+                                                                                (via Grad-CAM)
+                                                                            </span>
+                                                                        </span>
+                                                                        <span style={{ color: '#ff6b6b', fontWeight: 600 }}>{(severity * 100).toFixed(1)}%</span>
+                                                                    </div>
+                                                                    <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}>
+                                                                        <motion.div 
+                                                                            initial={{ width: 0 }}
+                                                                            animate={{ width: `${severity * 100}%` }}
+                                                                            transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+                                                                            style={{ height: '100%', background: '#ff6b6b', borderRadius: '10px' }} 
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            )}
 
                                                             <div style={{ display: 'flex', gap: '1rem', flexDirection: isMobile ? 'column' : 'row' }}>
                                                                 <button

@@ -109,7 +109,7 @@ export const Assistant = () => {
 
             // Use relative path for production (Vercel) and absolute for local dev
             const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-                ? 'http://localhost:8000/api/chat'
+                ? '/api/chat'
                 : '/api/chat';
 
             const response = await axios.post(API_URL, {

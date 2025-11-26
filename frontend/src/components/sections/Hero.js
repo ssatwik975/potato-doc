@@ -1,11 +1,11 @@
 import React from 'react';
-import { motion, useViewportScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Magnetic } from '../layout/Magnetic';
 import { useBreakpoint } from '../../hooks/useMediaQuery';
 
 export const Hero = () => {
-    const { scrollY } = useViewportScroll();
+    const { scrollY } = useScroll();
     const { isMobile } = useBreakpoint();
 
     // Always call hooks - React rules of hooks require this

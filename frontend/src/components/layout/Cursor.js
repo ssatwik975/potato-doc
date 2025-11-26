@@ -51,8 +51,8 @@ export const Cursor = () => {
                 }}
                 transition={{
                     type: 'spring',
-                    damping: 30,
-                    stiffness: 200,
+                    damping: 25,
+                    stiffness: 150,
                     mass: 0.5,
                 }}
                 style={{
@@ -74,8 +74,8 @@ export const Cursor = () => {
                 }}
                 transition={{
                     type: 'spring',
-                    damping: 50,
-                    stiffness: 500,
+                    damping: 40,
+                    stiffness: 400,
                 }}
                 style={{
                     position: 'fixed',

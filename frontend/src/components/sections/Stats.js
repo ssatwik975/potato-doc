@@ -17,7 +17,7 @@ const AnimatedNumber = ({ value, suffix = '' }) => {
     }, [isInView, value, spring]);
 
     useEffect(() => {
-        return spring.onChange(latest => {
+        return spring.on("change", latest => {
             setDisplay(latest.toFixed(value % 1 !== 0 ? 1 : 0));
         });
     }, [spring, value]);
