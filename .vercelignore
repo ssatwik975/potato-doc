@@ -1,0 +1,13 @@
+# Ignore heavy files and folders for Vercel deployment
+requirements.txt
+models/
+PlantVillage/
+venv/
+.venv/
+training.ipynb
+scripts/
+pseudo_severity.csv
+*.pth
+*.keras
+__pycache__/
+*.pyc
