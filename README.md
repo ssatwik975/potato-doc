@@ -1,5 +1,4 @@
-# Potato Doc – Accessible Precision Agriculture for Everyone
-
+# Potato Doc – Accessible Precision Agriculture
 <p align="center">
   <img src="public/hero.jpeg" alt="Potato Doc Hero Section" width="100%">
 </p>
