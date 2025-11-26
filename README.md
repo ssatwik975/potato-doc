@@ -105,6 +105,26 @@ The project is architected as a modern, cloud-native application:
 
 ---
 
+## DevOps & CI/CD Pipeline
+
+To ensure reliability and rapid iteration, we have implemented a robust **Continuous Integration/Continuous Deployment (CI/CD)** pipeline using **GitHub Actions**.
+
+### Pipeline Stages
+1.  **Frontend Integration:**
+    *   Installs dependencies and runs **ESLint** for code quality.
+    *   Executes **Unit Tests** to verify component logic.
+    *   Builds the production-ready React bundle.
+2.  **Backend Analysis:**
+    *   Sets up the Python environment and installs dependencies.
+    *   Runs **Flake8** for PEP8 compliance and syntax checking.
+    *   Executes **Pytest** suites to verify API endpoints.
+3.  **Security Scanning (DevSecOps):**
+    *   Runs **Trivy** filesystem scans to detect vulnerabilities in dependencies before deployment.
+4.  **Automated Deployment:**
+    *   Upon passing all checks, the code is automatically handed off to **Vercel** for zero-downtime deployment.
+
+---
+
 ## Getting Started
 
 ### Prerequisites
