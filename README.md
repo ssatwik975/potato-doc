@@ -47,6 +47,9 @@ Farmers often distrust AI because they cannot see *why* a decision was made. We 
 <p align="center">
   <img src="public/heatmap.jpeg" alt="Grad-CAM Heatmap Visualization" width="80%">
 </p>
+<p align="center">
+  <img src="public/chatin.jpeg" alt="User Query Assistance" width="80%">
+</p>
 
 ### Precision Severity Index
 
