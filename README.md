@@ -1,16 +1,42 @@
 # Potato Doc – Accessible Precision Agriculture
-<p align="center">
-  <img src="public/hero.jpeg" alt="Potato Doc Hero Section" width="100%">
+<p align="center"> 
+  <img src="public/hero.jpeg" alt="Potato Doc Hero Section" width="100%"> 
+</p> 
+<h3 align="center"> 
+  <a href="https://potato-doc.satwik.in">
+    <strong>
+      Live at potato-doc.satwik.in
+    </strong>
+  </a> 
+</h3>
+
+<p align="">
+  <strong>Explainable AI (XAI) + GenAI for Quantitative Plant Disease Diagnosis and Automated Severity Estimation</strong>
 </p>
 
 <p align="">
-  <strong>An Explainable AI (XAI) and GenAI-Powered Platform for Quantitative Plant Disease Diagnosis and Automated Severity Estimation.</strong>
-</p>
-
-<p align="">
-  A Major Project Report submitted in partial fulfillment of the requirements for the degree of Bachelor of Technology
+  Major Project submitted in partial fulfillment of the requirements for the degree of Bachelor of Technology
   by <strong>Satwik Singh (22U03036)</strong> and <strong>Arpit Raj (22U03034)</strong>
 </p>
+
+---
+## The Idea
+
+**What if small and marginal farmers could access the same AI enabled crop health diagnostics as large agritech companies - instantly, accurately, and affordably?**
+
+What began as a technical experiment quickly evolved into a real, end-to-end product designed for usability in the field. The platform is now a production grade AgroSaaS tool that combines:
+
+- XAI-driven Diagnosis (trustworthy, transparent predictions)
+
+- Quantitative Severity Estimation (not just “diseased,” but how much?)
+
+- Agronomist level Guidance through a RAG + GenAI assistant
+
+- Cloud native microservices enabling scalability and real deployment
+
+Rather than functioning like an academic showcase, Potato Doc operates like a practical digital agronomy tool to bring its users closer to the value obtained by corporate operations.
+
+
 
 ---
 
